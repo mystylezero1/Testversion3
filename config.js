@@ -1,41 +1,16 @@
-const CONFIG = {
-
-    wedding: {
-        bride: "Anja",
-        groom: "Dino",
-        title: "💍 Hochzeitsgesellschaft Anja & Dino"
-    },
-
-    search: {
-        live: true,
-        fuzzy: true,
-        duplicates: true,
-        minChars: 2
-    },
-
-    animation: {
-        zoom: true,
-        blink: true,
-        confetti: true,
-        speechBubble: true,
-        duration: 7000
-    },
-
-    sound: {
-        enabled: true,
-        funMode: true,
-        volume: 0.5
-    },
-
-    admin: {
-        enabled: true,
-        password: "hochzeit"
-    },
-
-    ui: {
-        mobileFirst: true,
-        darkOverlay: true,
-        glassmorphism: true
-    }
-
+export const CONFIG = {
+  names: {
+    bride: "Anja",
+    groom: "Dino"
+  },
+  title: "Hochzeit Anja & Dino",
+  subtitle: "Finde deinen Platz im Saal",
+  adminPasswordHash: "7c4a8d09ca3762af61e59520943dc26494f8941b", // Demo Hash
+  photoAlbumUrl: "https://photos.app.goo.gl/example",
+  colors: {
+    gold: "#D4AF37",
+    creme: "#FAF7F2",
+    white: "#FFFFFF",
+    dark: "#2A2A2A"
+  }
 };
