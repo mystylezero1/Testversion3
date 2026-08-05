@@ -1,258 +1,41 @@
-/* ======================================
-   Wedding App 2.0
-   Konfiguration
-   Hochzeitsgesellschaft Anja & Dino
-====================================== */
-
-
 const CONFIG = {
 
-
-    /* ==================================
-       HOCHZEIT
-    ================================== */
-
-
     wedding: {
-
-        title:
-            "Hochzeitsgesellschaft",
-
-        bride:
-            "Anja",
-
-        groom:
-            "Dino",
-
-        emoji:
-            "💍"
-
+        bride: "Anja",
+        groom: "Dino",
+        title: "💍 Hochzeitsgesellschaft Anja & Dino"
     },
-
-
-
-
-    /* ==================================
-       DATEN
-    ================================== */
-
-
-    data: {
-
-
-        file:
-
-            "data.json",
-
-
-        encoding:
-
-            "utf-8"
-
-
-    },
-
-
-
-
-    /* ==================================
-       GRUNDRISS
-    ================================== */
-
-
-    map: {
-
-
-        svgId:
-
-            "weddingMap",
-
-
-
-        defaultZoom:
-
-            1,
-
-
-
-        minZoom:
-
-            0.5,
-
-
-
-        maxZoom:
-
-            3
-
-
-
-    },
-
-
-
-
-
-    /* ==================================
-       SUCHE
-    ================================== */
-
 
     search: {
-
-
-        placeholder:
-
-            "Name, Tisch oder Sitzplatz suchen...",
-
-
-
-        fields:[
-
-            "name",
-
-            "tisch",
-
-            "platz"
-
-        ],
-
-
-
-        highlightTime:
-
-            5000
-
-
+        live: true,
+        fuzzy: true,
+        duplicates: true,
+        minChars: 2
     },
 
-
-
-
-
-    /* ==================================
-       ANIMATION
-    ================================== */
-
-
-    animation:{
-
-
-        blinkSpeed:
-
-            1000,
-
-
-
-        bubbleDuration:
-
-            5000,
-
-
-
-        confetti:
-
-            true
-
-
+    animation: {
+        zoom: true,
+        blink: true,
+        confetti: true,
+        speechBubble: true,
+        duration: 7000
     },
 
-
-
-
-
-    /* ==================================
-       ADMIN
-    ================================== */
-
-
-    admin:{
-
-
-        enabled:
-
-            true,
-
-
-
-        requirePassword:
-
-            true,
-
-
-
-        maxChanges:
-
-            "unlimited"
-
-
-
+    sound: {
+        enabled: true,
+        funMode: true,
+        volume: 0.5
     },
 
-
-
-
-
-    /* ==================================
-       EXCEL
-    ================================== */
-
-
-    excel:{
-
-
-        enabled:
-
-            true,
-
-
-
-        importFile:
-
-            "gaeste.xlsx",
-
-
-
-        exportFile:
-
-            "sitzplan_export.xlsx"
-
-
+    admin: {
+        enabled: true,
+        password: "hochzeit"
     },
 
-
-
-
-
-    /* ==================================
-       GITHUB
-    ================================== */
-
-
-    github:{
-
-
-        enabled:
-
-            true,
-
-
-        pages:
-
-            true
-
-
+    ui: {
+        mobileFirst: true,
+        darkOverlay: true,
+        glassmorphism: true
     }
 
-
-
-
 };
-
-
-/* ======================================
-   EXPORT
-====================================== */
-
-
-window.APP_CONFIG = CONFIG;
