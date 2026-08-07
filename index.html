@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hochzeit Anja & Dino</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -18,7 +18,7 @@
     </header>
 
     <main class="main-container">
-        <!-- Willkommensseite / Suche (Kein Saalplan-Anzeigen-Button mehr) -->
+        <!-- Willkommensseite / Suche -->
         <section id="search-section" class="card">
             <h2>Gast finden</h2>
             <div class="search-box">
@@ -30,7 +30,7 @@
             </div>
         </section>
 
-        <!-- Saalplan Ansicht (Öffnet sich nur bei Gasts-Suche) -->
+        <!-- Saalplan Ansicht -->
         <section id="map-section" class="card map-card hidden">
             <div class="map-header">
                 <h3 id="target-guest-info">Saalplan</h3>
@@ -38,9 +38,9 @@
             </div>
             <div id="map-viewport" class="map-viewport">
                 <div id="map-container" class="map-container">
-                    <div class="room-zone" style="bottom: 5px; left: 5px; width: 90px; height: 35px; font-size: 0.65rem;">🚪 Eingang</div>
-                    <div class="room-zone" style="bottom: 5px; left: 105px; right: 5px; height: 35px; font-size: 0.65rem;">🎧 DJ & Tanzfläche</div>
-                    <div class="room-zone buffet-zone" style="top: 30%; right: 10px; width: 100px; height: 40px;">🥂 Ausschank & Buffet</div>
+                    <div class="room-zone" style="bottom: 10px; left: 10px; width: 100px; height: 40px;">🚪 Eingang</div>
+                    <div class="room-zone" style="bottom: 10px; left: 120px; right: 10px; height: 40px;">🎧 DJ & Tanzfläche</div>
+                    <div class="room-zone buffet-zone" style="top: 35%; right: 10px;">🥂 Ausschank & Buffet</div>
                     
                     <div id="tables-layer" class="tables-layer"></div>
                 </div>
@@ -51,6 +51,7 @@
         </section>
     </main>
 
+    <!-- Dialog bei doppelten Namen -->
     <dialog id="disambiguation-dialog" class="modal">
         <h3>Mehrere Personen gefunden</h3>
         <p>Bitte wähle deinen genauen Platz aus:</p>
@@ -60,6 +61,7 @@
         </div>
     </dialog>
 
+    <!-- Admin Modal -->
     <dialog id="admin-dialog" class="modal">
         <h3>🔒 Admin-Konsole</h3>
         <div id="admin-auth">
