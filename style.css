@@ -1,43 +1,37 @@
-/* Saalplan Viewport – Fester Rahmen, kein Scrollen */
-.map-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;}
-.map-viewport {
-    width: 100%; height: 520px; overflow: hidden; position: relative;
-    border-radius: 10px; background: var(--creme); border: 1px solid var(--gold-light);
-}
-
-.map-container {
-    position: absolute; width: 100%; height: 100%; top: 0; left: 0;
-    transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-    transform-origin: center center;
-}
-
-.room-zone {
-    position: absolute; background: rgba(244, 232, 193, 0.6);
-    border: 1px dashed var(--gold-dark); color: var(--gold-dark);
-    display: flex; align-items: center; justify-content: center;
-    font-weight: bold; font-size: 0.65rem; border-radius: 6px; text-align: center;
-}
-
-.buffet-zone {
-    width: 95px !important; height: 35px !important; font-size: 0.65rem; padding: 2px;
-}
-
-/* Tische mit Namen-Anzeige im perfekten Format */
+/* Tische mit scrollbarer Namensliste für große Tische */
 .table-marker {
     position: absolute; transform: translate(-50%, -50%);
     background: var(--white); border: 2px solid var(--gold);
-    border-radius: 6px; width: 90px; height: 60px;
+    border-radius: 6px; width: 110px; height: 75px;
     display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
     font-weight: bold; color: var(--gold-dark); 
     box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.3s ease;
-    padding: 3px; text-align: center; overflow: hidden;
+    padding: 3px; text-align: center;
 }
 
-.table-marker .table-title { font-size: 0.65rem; color: var(--gold-dark); border-bottom: 1px solid var(--gold-light); width: 100%; margin-bottom: 2px; }
-.table-marker .table-guests { font-size: 0.5rem; color: #444; line-height: 1.1; width: 100%; word-break: break-word; }
+.table-marker .table-title { 
+    font-size: 0.65rem; 
+    color: var(--gold-dark); 
+    border-bottom: 1px solid var(--gold-light); 
+    width: 100%; 
+    margin-bottom: 2px; 
+    flex-shrink: 0;
+}
 
+.table-marker .table-guests { 
+    font-size: 0.5rem; 
+    color: #444; 
+    line-height: 1.1; 
+    width: 100%; 
+    overflow-y: auto; /* Ermöglicht das Scrollen durch alle Namen im Tisch */
+    max-height: 50px;
+    text-align: left;
+    padding-right: 2px;
+}
+
+/* Brauttisch etwas breiter und ebenfalls mit Scrollfunktion für viele Gäste */
 .table-marker.braut {
-    width: 160px; height: 55px; background: var(--gold-light);
+    width: 180px; height: 75px; background: var(--gold-light);
 }
 
 .table-marker.highlight {
@@ -50,9 +44,4 @@
 @keyframes goldPulse {
     0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.9); }
     100% { transform: translate(-50%, -50%) scale(1.15); box-shadow: 0 0 0 12px rgba(212, 175, 55, 0); }
-}
-
-.speech-banner {
-    margin-top: 0.75rem; background: var(--gold-light); padding: 0.5rem;
-    border-radius: 8px; text-align: center; color: var(--gold-dark); font-weight: bold; font-size: 0.85rem;
 }
