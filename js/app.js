@@ -36,7 +36,8 @@ class WeddingApp {
 
     async loadData() {
         try {
-            const response = await fetch('../data.json');
+            // WICHTIG: Pfad geändert auf './data.json'
+            const response = await fetch('./data.json');
             this.data = await response.json();
             this.renderMapMarkers();
         } catch (error) {
@@ -50,12 +51,11 @@ class WeddingApp {
         
         this.data.tables.forEach(table => {
             const marker = document.createElement('div');
-            // Wir nutzen hier vorerst simples Styling für die Tische im Grundriss
             marker.style.position = 'absolute';
             marker.style.left = `${table.x}%`;
             marker.style.top = `${table.y}%`;
             marker.style.transform = 'translate(-50%, -50%)';
-            marker.style.background = 'rgba(212, 175, 55, 0.8)'; // Gold transparent
+            marker.style.background = 'rgba(212, 175, 55, 0.8)';
             marker.style.border = '2px solid white';
             marker.style.borderRadius = '50%';
             marker.style.width = '30px';
