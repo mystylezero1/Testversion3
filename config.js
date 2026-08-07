@@ -3,8 +3,14 @@ export const CONFIG = {
         bride: "Anja",
         groom: "Dino"
     },
-    title: "Willkommen zu unserer Hochzeit",
-    subtitle: "Finde deinen Sitzplatz",
-    expirationDate: "2026-08-30T00:00:00",
-    adminPasswordHash: "admin123" // Einfaches Demo-Passwort für deine Schwester
+    title: "Hochzeit Anja & Dino",
+    subtitle: "Finde deinen Platz im Saal",
+    adminPasswordHash: "admin123", // Passwort für die Admin-Konsole
+    photoAlbumUrl: "https://photos.google.com",
+    colors: {
+        gold: "#D4AF37",
+        creme: "#FAF7F2",
+        white: "#FFFFFF",
+        dark: "#2A2A2A"
+    }
 };
