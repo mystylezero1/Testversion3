@@ -5,18 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hochzeit Anja & Dino - Sitzplan</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Externe Bibliothek für das Gold-Konfetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
-    <!-- Canvas für Konfetti Animation -->
     <canvas id="confetti-canvas"></canvas>
 
-    <!-- Ablaufdatum-Screen -->
     <div id="expiry-screen" class="expiry-message hidden">
         <h1>Vielen Dank!</h1>
         <p>Es war eine unvergessliche Feier.</p>
-        <p>Der interaktive Sitzplan ist nun geschlossen.</p>
     </div>
 
     <div id="app-content">
@@ -27,7 +23,6 @@
         </header>
 
         <main class="main-container">
-            <!-- Startseite: Suchfunktion -->
             <section id="search-section" class="card">
                 <h2>Gast finden</h2>
                 <div class="search-box">
@@ -36,20 +31,14 @@
                 </div>
             </section>
 
-            <!-- Pure CSS Saalplan -->
             <section id="map-section" class="card map-card hidden">
                 <div class="map-header">
                     <h3 id="target-guest-info">Saalplan</h3>
                 </div>
+                <!-- Der stabile Image-Viewport -->
                 <div id="map-viewport" class="map-viewport">
                     <div id="map-container" class="map-container">
-                        
-                        <!-- Statische Raum-Elemente (Eingang, DJ, Buffet) -->
-                        <div class="room-element" style="bottom: 2%; left: 10%; width: 25%;">🚪 Eingang</div>
-                        <div class="room-element" style="bottom: 2%; left: 50%; transform: translateX(-50%); width: 40%;">🎧 DJ & Tanzfläche</div>
-                        <div class="room-element" style="top: 50%; right: 2%; transform: translateY(-50%); height: 35%; writing-mode: vertical-rl; text-align: center;">🥂 Ausschank & Buffet</div>
-                        
-                        <!-- Hier werden die Tische per JavaScript gerendert -->
+                        <img src="assets/saalplan.jpg" id="map-image" alt="Saalplan" />
                         <div id="tables-layer" class="tables-layer"></div>
                     </div>
                 </div>
@@ -57,7 +46,6 @@
         </main>
     </div>
 
-    <!-- Dialog für doppelte Namen -->
     <dialog id="disambiguation-dialog" class="modal">
         <h3>Mehrere Personen gefunden</h3>
         <p>Bitte wähle deinen genauen Platz aus:</p>
