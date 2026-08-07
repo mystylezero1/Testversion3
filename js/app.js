@@ -20,28 +20,18 @@ class WeddingApp {
             this.renderMapMarkers();
         });
 
-        const resetBtn = document.getElementById('reset-map-btn');
-        if (resetBtn) {
-            resetBtn.addEventListener('click', () => this.resetMap());
-        }
-        
-        const pdfBtn = document.getElementById('pdf-download-btn');
-        if (pdfBtn) {
-            pdfBtn.addEventListener('click', () => window.print());
-        }
+        document.getElementById('reset-map-btn').addEventListener('click', () => this.resetMap());
+        document.getElementById('pdf-download-btn').addEventListener('click', () => window.print());
     }
 
     applyConfig() {
-        const titleEl = document.getElementById('app-title');
-        const subEl = document.getElementById('app-subtitle');
-        if (titleEl) titleEl.innerText = `${this.config.names.bride} & ${this.config.names.groom}`;
-        if (subEl) subEl.innerText = this.config.subtitle;
+        document.getElementById('app-title').innerText = `${this.config.names.bride} & ${this.config.names.groom}`;
+        document.getElementById('app-subtitle').innerText = this.config.subtitle;
     }
 
     async loadData() {
         try {
             const res = await fetch('data.json');
-            if (!res.ok) throw new Error('Netzwerk-Antwort war nicht ok');
             this.data = await res.json();
             this.renderMapMarkers();
         } catch (e) {
@@ -63,15 +53,30 @@ class WeddingApp {
             marker.style.left = `${table.x}%`;
             marker.style.top = `${table.y}%`;
 
-            const tableGuests = this.data.guests.filter(g => g.tableId === table.id);
-            const guestNames = tableGuests.length > 0 
-                ? tableGuests.map(g => g.name).join(', ') 
-                : 'Frei';
+            const tableGuests = this.data.guests
+                .filter(g => g.tableId === table.id)
+                .sort((a, b) => parseInt(a.seat || 0) - parseInt(b.seat || 0));
 
-            marker.innerHTML = `
-                <div class="table-title">${table.name}</div>
-                <div class="table-guests" title="${guestNames}">${guestNames}</div>
-            `;
+            if (table.id === 't-braut') {
+                let guestsHtml = tableGuests.map(g => `<div class="guest-row"><span class="guest-seat">${g.seat}</span><span class="guest-name">${g.name}</span></div>`).join('');
+                marker.innerHTML = `
+                    <div class="table-header"><span>💍 Brauttisch</span></div>
+                    <div class="braut-guests-grid">${guestsHtml}</div>
+                `;
+            } else {
+                let tableNumber = table.name.replace('Tisch ', '');
+                let guestsHtml = tableGuests.length > 0 
+                    ? tableGuests.map(g => `<div class="guest-row"><span class="guest-seat">${g.seat}</span><span class="guest-name">${g.name}</span></div>`).join('')
+                    : '<div class="guest-row">Frei</div>';
+
+                marker.innerHTML = `
+                    <div class="table-header">
+                        <span>${table.name}</span>
+                        <span style="background:var(--gold-light); padding:1px 4px; border-radius:4px; font-size:0.6rem;">${tableNumber}</span>
+                    </div>
+                    <div class="table-guests-list">${guestsHtml}</div>
+                `;
+            }
 
             layer.appendChild(marker);
         });
@@ -82,10 +87,7 @@ class WeddingApp {
         if (mapSection) mapSection.classList.remove('hidden');
         
         const table = this.data.tables.find(t => t.id === guest.tableId);
-        const infoEl = document.getElementById('target-guest-info');
-        if (infoEl) {
-            infoEl.innerText = `${guest.name} ➔ ${table ? table.name : 'Tisch'}, Sitzplatz ${guest.seat}`;
-        }
+        document.getElementById('target-guest-info').innerText = `${guest.name} ➔ ${table ? table.name : 'Tisch'}, Sitzplatz ${guest.seat}`;
         
         const speechBanner = document.getElementById('speech-banner');
         const speechText = document.getElementById('speech-text');
@@ -100,17 +102,14 @@ class WeddingApp {
             
             if (targetMarker) {
                 targetMarker.classList.add('highlight');
-                
-                setTimeout(() => {
-                    targetMarker.classList.remove('highlight');
-                }, 5000);
+                setTimeout(() => targetMarker.classList.remove('highlight'), 5000);
 
                 const container = document.getElementById('map-container');
                 if (container) {
-                    const scale = 1.4;
-                    const tx = (50 - table.x);
-                    const ty = (50 - table.y);
-                    container.style.transform = `translate(${tx}%, ${ty}%) scale(${scale})`;
+                    const scale = 1.3;
+                    const tx = (450 - (table.x / 100) * 900) * (scale - 1) / scale;
+                    const ty = (475 - (table.y / 100) * 950) * (scale - 1) / scale;
+                    container.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
                 }
             }
         }
@@ -121,13 +120,11 @@ class WeddingApp {
     resetMap() {
         const container = document.getElementById('map-container');
         if (container) {
-            container.style.transform = 'translate(0%, 0%) scale(1)';
+            container.style.transform = 'translate(0px, 0px) scale(1)';
         }
         document.querySelectorAll('.table-marker').forEach(m => m.classList.remove('highlight'));
-        const infoEl = document.getElementById('target-guest-info');
-        if (infoEl) infoEl.innerText = "Gesamter Saalplan";
-        const speechBanner = document.getElementById('speech-banner');
-        if (speechBanner) speechBanner.classList.add('hidden');
+        document.getElementById('target-guest-info').innerText = "Gesamter Saalplan";
+        document.getElementById('speech-banner').classList.add('hidden');
     }
 }
 
