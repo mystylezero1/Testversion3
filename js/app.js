@@ -22,9 +22,11 @@ class WeddingApp {
             this.renderMapMarkers();
         });
 
+        // Event-Listener für Buttons
         document.getElementById('reset-map-btn').addEventListener('click', () => this.resetMap());
+        document.getElementById('show-map-btn').addEventListener('click', () => this.showFullMap());
         document.getElementById('pdf-download-btn').addEventListener('click', () => {
-            window.print(); // Drucken-Dialog öffnet sich zum direkten Speichern als PDF
+            window.print(); // Öffnet den Druck-/PDF-Speichern-Dialog
         });
     }
 
@@ -77,12 +79,12 @@ class WeddingApp {
             if (targetMarker) {
                 targetMarker.classList.add('highlight');
                 
-                // Exakter 5-Sekunden-Timer zum Blinken stoppen falls nötig
+                // Nach exakt 5 Sekunden das Blinken stoppen
                 setTimeout(() => {
                     targetMarker.classList.remove('highlight');
                 }, 5000);
 
-                // Zoom zum Tisch
+                // Weicher Zoom zum Tisch
                 const container = document.getElementById('map-container');
                 const scale = 2.2;
                 const tx = -(table.x * scale) + 50;
@@ -92,6 +94,11 @@ class WeddingApp {
         }
 
         triggerConfetti();
+    }
+
+    showFullMap() {
+        document.getElementById('map-section').classList.remove('hidden');
+        this.resetMap();
     }
 
     resetMap() {
