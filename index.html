@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Hochzeit Anja & Dino</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -14,25 +14,23 @@
     <header class="header">
         <h1 id="app-title">Anja & Dino</h1>
         <p id="app-subtitle">Finde deinen Sitzplatz</p>
-        <!-- Admin Trigger (Links unten) -->
         <button id="admin-trigger-btn" class="btn-admin-trigger" title="Admin Konsole">🔒 Admin</button>
     </header>
 
     <main class="main-container">
-        <!-- Willkommensseite / Suche -->
+        <!-- Willkommensseite / Suche (Kein Saalplan-Anzeigen-Button mehr) -->
         <section id="search-section" class="card">
             <h2>Gast finden</h2>
             <div class="search-box">
                 <input type="text" id="search-input" placeholder="Name eingeben (z.B. Max)..." autocomplete="off">
                 <div id="search-results" class="results-dropdown"></div>
             </div>
-            <div class="welcome-actions" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
-                <button id="show-map-btn" class="btn-gold">🗺️ Saalplan anzeigen</button>
+            <div class="welcome-actions" style="margin-top: 1rem;">
                 <button id="pdf-download-btn" class="btn-creme">📥 Saalplan als PDF drucken / speichern</button>
             </div>
         </section>
 
-        <!-- Saalplan Ansicht -->
+        <!-- Saalplan Ansicht (Öffnet sich nur bei Gasts-Suche) -->
         <section id="map-section" class="card map-card hidden">
             <div class="map-header">
                 <h3 id="target-guest-info">Saalplan</h3>
@@ -40,22 +38,19 @@
             </div>
             <div id="map-viewport" class="map-viewport">
                 <div id="map-container" class="map-container">
-                    <!-- Statische Bereiche exakt nach Grundriss -->
-                    <div class="room-zone" style="bottom: 10px; left: 10px; width: 110px; height: 45px;">🚪 Eingang</div>
-                    <div class="room-zone" style="bottom: 10px; left: 140px; right: 10px; height: 45px;">🎧 DJ & Tanzfläche</div>
-                    <div class="room-zone buffet-zone" style="top: 35%; right: 20px; width: 110px; height: 45px;">🥂 Ausschank & Buffet</div>
+                    <div class="room-zone" style="bottom: 5px; left: 5px; width: 90px; height: 35px; font-size: 0.65rem;">🚪 Eingang</div>
+                    <div class="room-zone" style="bottom: 5px; left: 105px; right: 5px; height: 35px; font-size: 0.65rem;">🎧 DJ & Tanzfläche</div>
+                    <div class="room-zone buffet-zone" style="top: 30%; right: 10px; width: 100px; height: 40px;">🥂 Ausschank & Buffet</div>
                     
                     <div id="tables-layer" class="tables-layer"></div>
                 </div>
             </div>
-            <!-- Tisch-Spruch Banner -->
             <div id="speech-banner" class="speech-banner hidden">
                 <span id="speech-text"></span>
             </div>
         </section>
     </main>
 
-    <!-- Dialog bei doppelten Namen -->
     <dialog id="disambiguation-dialog" class="modal">
         <h3>Mehrere Personen gefunden</h3>
         <p>Bitte wähle deinen genauen Platz aus:</p>
@@ -65,8 +60,7 @@
         </div>
     </dialog>
 
-    <!-- Admin Modal -->
-    <dialog id="admin-dialog" class="modal admin-modal-pos">
+    <dialog id="admin-dialog" class="modal">
         <h3>🔒 Admin-Konsole</h3>
         <div id="admin-auth">
             <input type="password" id="admin-password" placeholder="Passwort" style="width:100%; padding:0.6rem; margin-bottom:1rem; border:1px solid #ccc; border-radius:6px;">
