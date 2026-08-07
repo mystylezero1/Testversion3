@@ -1,5 +1,6 @@
 import { CONFIG } from '../config.js';
 import { initSearch } from './search.js';
+import { initAdmin } from './admin.js';
 
 class WeddingApp {
     constructor() {
@@ -9,14 +10,18 @@ class WeddingApp {
 
     async init() {
         if (this.checkExpiration()) return;
+
         this.applyConfig();
         await this.loadData();
+        
         initSearch(this.data.guests, (guest) => this.onGuestSelected(guest));
+        initAdmin();
     }
 
     checkExpiration() {
         const now = new Date();
         const expiryDate = new Date(this.config.expirationDate);
+        
         if (now > expiryDate) {
             document.getElementById('app-content').classList.add('hidden');
             document.getElementById('expiry-screen').classList.remove('hidden');
@@ -49,8 +54,7 @@ class WeddingApp {
             marker.style.left = `${table.x}%`;
             marker.style.top = `${table.y}%`;
             marker.id = `marker-${table.id}`;
-            marker.classList.add('css-table'); // Nutzt jetzt unser elegantes CSS-Design
-            marker.innerText = table.name; // Schreibt den Namen (z.B. "Tisch 3") in die Box
+            marker.classList.add('table-marker-dot');
             
             layer.appendChild(marker);
         });
@@ -64,7 +68,7 @@ class WeddingApp {
         document.getElementById('target-guest-info').innerText = `${guest.name} – ${tableName}, Platz ${guest.seat}`;
         
         if (table) {
-            document.querySelectorAll('.css-table').forEach(m => m.classList.remove('highlight'));
+            document.querySelectorAll('.table-marker-dot').forEach(m => m.classList.remove('highlight'));
             
             const targetMarker = document.getElementById(`marker-${table.id}`);
             if (targetMarker) {
@@ -72,7 +76,7 @@ class WeddingApp {
             }
 
             const container = document.getElementById('map-container');
-            const scale = 2.0; 
+            const scale = 2.2; 
             
             const translateX = -(table.x * scale) + 50; 
             const translateY = -(table.y * scale) + 50;
