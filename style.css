@@ -1,47 +1,158 @@
-/* Tische mit scrollbarer Namensliste für große Tische */
+:root {
+    --gold: #D4AF37;
+    --gold-light: #F4E8C1;
+    --gold-dark: #A38018;
+    --creme: #FAF7F2;
+    --white: #FFFFFF;
+    --dark: #2A2A2A;
+    --shadow: 0 4px 15px rgba(0,0,0,0.06);
+    --radius: 12px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--creme);
+    color: var(--dark);
+    display: flex; flex-direction: column; align-items: center;
+    min-height: 100vh; padding: 1rem;
+}
+
+#confetti-canvas {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 999;
+}
+
+.header {
+    text-align: center; margin-bottom: 1rem; width: 100%; max-width: 900px;
+}
+.header h1 { font-family: Georgia, serif; color: var(--gold-dark); font-size: 2rem; }
+.header p { color: #777; font-size: 0.9rem; margin-top: 0.2rem; }
+
+.btn-admin-trigger {
+    position: fixed; bottom: 15px; left: 15px;
+    background: var(--white); border: 1px solid var(--gold);
+    color: var(--gold-dark); padding: 0.4rem 0.8rem; border-radius: 20px;
+    cursor: pointer; box-shadow: var(--shadow); z-index: 100; font-size: 0.75rem;
+}
+
+.main-container {
+    width: 100%; max-width: 950px; display: flex; flex-direction: column; gap: 1.5rem;
+}
+
+.card {
+    background: var(--white); padding: 1.5rem;
+    border-radius: var(--radius); box-shadow: var(--shadow);
+    border: 1px solid var(--gold-light);
+}
+
+.hidden { display: none !important; }
+
+.search-box { position: relative; margin-top: 0.5rem; }
+.search-box input {
+    width: 100%; padding: 0.75rem 1rem; font-size: 1rem;
+    border: 2px solid var(--gold-light); border-radius: 8px;
+    outline: none; background: var(--creme);
+}
+.search-box input:focus { border-color: var(--gold); }
+
+.results-dropdown {
+    position: absolute; top: 105%; left: 0; right: 0;
+    background: var(--white); border: 1px solid var(--gold-light);
+    border-radius: 8px; box-shadow: var(--shadow);
+    max-height: 200px; overflow-y: auto; z-index: 20;
+}
+.result-item { padding: 0.6rem 1rem; cursor: pointer; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; }
+.result-item:hover { background: var(--gold-light); }
+
+/* Exakter Saalplan Rahmen genau wie auf deiner Wunschvorlage */
+.map-card { padding: 1.5rem; background: var(--creme); }
+.map-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;}
+
+.map-viewport {
+    width: 100%; height: 720px; overflow: auto; position: relative;
+    border-radius: var(--radius); background: var(--white); border: 1px solid var(--gold-light);
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.map-container {
+    position: relative; width: 900px; height: 950px; margin: 0 auto;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    transform-origin: center center;
+}
+
+.room-zone {
+    position: absolute; background: var(--white);
+    border: 1px solid var(--gold-light); color: var(--gold-dark);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold; font-size: 0.75rem; border-radius: 8px; box-shadow: var(--shadow);
+}
+
+.buffet-zone {
+    width: 110px !important; height: 50px !important; font-size: 0.75rem;
+}
+
+/* Tische exakt im Stil deiner Vorlage mit Sitzplätzen untereinander */
 .table-marker {
     position: absolute; transform: translate(-50%, -50%);
-    background: var(--white); border: 2px solid var(--gold);
-    border-radius: 6px; width: 110px; height: 75px;
-    display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
-    font-weight: bold; color: var(--gold-dark); 
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.3s ease;
-    padding: 3px; text-align: center;
+    background: var(--white); border: 1px solid var(--gold-light);
+    border-radius: 8px; width: 120px; min-height: 80px;
+    display: flex; flex-direction: column; align-items: stretch;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.04); transition: all 0.3s ease;
+    padding: 6px; text-align: left;
 }
 
-.table-marker .table-title { 
-    font-size: 0.65rem; 
-    color: var(--gold-dark); 
-    border-bottom: 1px solid var(--gold-light); 
-    width: 100%; 
-    margin-bottom: 2px; 
-    flex-shrink: 0;
+.table-header {
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid var(--gold-light); padding-bottom: 3px; margin-bottom: 4px;
+    font-size: 0.75rem; font-weight: bold; color: var(--gold-dark);
 }
 
-.table-marker .table-guests { 
-    font-size: 0.5rem; 
-    color: #444; 
-    line-height: 1.1; 
-    width: 100%; 
-    overflow-y: auto; /* Ermöglicht das Scrollen durch alle Namen im Tisch */
-    max-height: 50px;
-    text-align: left;
-    padding-right: 2px;
+.table-guests-list {
+    display: flex; flex-direction: column; gap: 2px;
+    max-height: 120px; overflow-y: auto;
 }
 
-/* Brauttisch etwas breiter und ebenfalls mit Scrollfunktion für viele Gäste */
+.guest-row {
+    display: flex; justify-content: space-between; font-size: 0.65rem; color: #444;
+    padding: 1px 3px; border-radius: 3px;
+}
+.guest-row:hover { background: var(--creme); }
+.guest-seat { color: #888; font-weight: bold; margin-right: 4px; }
+.guest-name { flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Brauttisch im Vorlagen-Stil */
 .table-marker.braut {
-    width: 180px; height: 75px; background: var(--gold-light);
+    width: 320px; min-height: 60px; background: var(--white); border: 2px solid var(--gold);
+}
+.braut-guests-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; font-size: 0.65rem;
 }
 
+/* Highlight beim Suchen */
 .table-marker.highlight {
-    background: var(--gold); color: var(--white); border-color: var(--white);
+    border: 2px solid var(--gold) !important;
+    box-shadow: 0 0 0 6px rgba(212, 175, 55, 0.25);
     z-index: 50; animation: goldPulse 1s infinite alternate;
 }
-.table-marker.highlight .table-title,
-.table-marker.highlight .table-guests { color: var(--white); border-color: rgba(255,255,255,0.4); }
 
 @keyframes goldPulse {
-    0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.9); }
-    100% { transform: translate(-50%, -50%) scale(1.15); box-shadow: 0 0 0 12px rgba(212, 175, 55, 0); }
+    0% { transform: translate(-50%, -50%) scale(1); }
+    100% { transform: translate(-50%, -50%) scale(1.05); }
+}
+
+.speech-banner {
+    margin-top: 1rem; background: var(--gold-light); padding: 0.75rem;
+    border-radius: 8px; text-align: center; color: var(--gold-dark); font-weight: bold; font-size: 0.9rem;
+}
+
+.btn-gold { background: var(--gold); color: var(--white); border: none; padding: 0.75rem 1.2rem; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; text-align: center; }
+.btn-creme { background: var(--gold-light); color: var(--gold-dark); border: none; padding: 0.75rem 1.2rem; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; text-align: center; }
+.btn-secondary { background: #e0e0e0; color: #333; border: none; padding: 0.4rem 0.8rem; border-radius: 8px; cursor: pointer; font-size: 0.8rem; }
+
+@media print {
+    body * { visibility: hidden; }
+    .map-card, .map-card * { visibility: visible; }
+    .map-card { position: absolute; left: 0; top: 0; width: 100%; border: none; box-shadow: none; }
+    #reset-map-btn { display: none !important; }
 }
