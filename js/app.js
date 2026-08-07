@@ -35,7 +35,7 @@ class WeddingApp {
             this.data = await res.json();
             this.renderMapMarkers();
         } catch (e) {
-            console.error("Fehler beim Laden der data.json:", e);
+            console.error("Fehler beim Laden der data.json", e);
         }
     }
 
@@ -58,7 +58,12 @@ class WeddingApp {
                 .sort((a, b) => parseInt(a.seat || 0) - parseInt(b.seat || 0));
 
             if (table.id === 't-braut') {
-                let guestsHtml = tableGuests.map(g => `<div class="guest-row"><span class="guest-seat">${g.seat}</span><span class="guest-name">${g.name}</span></div>`).join('');
+                let guestsHtml = tableGuests.map(g => `
+                    <div class="guest-row">
+                        <span class="guest-seat">${g.seat}</span>
+                        <span class="guest-name">${g.name}</span>
+                    </div>
+                `).join('');
                 marker.innerHTML = `
                     <div class="table-header"><span>💍 Brauttisch</span></div>
                     <div class="braut-guests-grid">${guestsHtml}</div>
@@ -66,13 +71,18 @@ class WeddingApp {
             } else {
                 let tableNumber = table.name.replace('Tisch ', '');
                 let guestsHtml = tableGuests.length > 0 
-                    ? tableGuests.map(g => `<div class="guest-row"><span class="guest-seat">${g.seat}</span><span class="guest-name">${g.name}</span></div>`).join('')
-                    : '<div class="guest-row">Frei</div>';
+                    ? tableGuests.map(g => `
+                        <div class="guest-row">
+                            <span class="guest-seat">${g.seat}</span>
+                            <span class="guest-name">${g.name}</span>
+                        </div>
+                    `).join('')
+                    : '<div class="guest-row"><span class="guest-name" style="grid-column: span 2; text-align:center;">Frei</span></div>';
 
                 marker.innerHTML = `
                     <div class="table-header">
                         <span>${table.name}</span>
-                        <span style="background:var(--gold-light); padding:1px 4px; border-radius:4px; font-size:0.6rem;">${tableNumber}</span>
+                        <span style="background:var(--gold-light); padding:1px 4px; border-radius:4px; font-size:0.55rem;">${tableNumber}</span>
                     </div>
                     <div class="table-guests-list">${guestsHtml}</div>
                 `;
@@ -106,7 +116,7 @@ class WeddingApp {
 
                 const container = document.getElementById('map-container');
                 if (container) {
-                    const scale = 1.3;
+                    const scale = 1.4;
                     const tx = (450 - (table.x / 100) * 900) * (scale - 1) / scale;
                     const ty = (475 - (table.y / 100) * 950) * (scale - 1) / scale;
                     container.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
