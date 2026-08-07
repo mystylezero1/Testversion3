@@ -18,7 +18,7 @@ export function initSearch(guests, onSelectGuest) {
         matches.forEach(guest => {
             const item = document.createElement('div');
             item.className = 'result-item';
-            item.innerText = guest.name;
+            item.innerText = `${guest.name} (Sitzplatz ${guest.seat})`;
             
             item.addEventListener('click', () => processSelection(guest.name, matches));
             resultsContainer.appendChild(item);
