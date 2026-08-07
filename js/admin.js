@@ -1,99 +1,114 @@
-import { exportToExcel } from './excel.js';
-
 export class AdminModule {
-    constructor(data, onDataChanged) {
+    constructor(data, onUpdate) {
         this.data = data;
-        this.onDataChanged = onDataChanged;
-        this.dialog = document.getElementById('admin-dialog');
-        this.triggerBtn = document.getElementById('admin-trigger-btn');
-        this.loginBtn = document.getElementById('admin-login-btn');
-        this.closeBtn = document.getElementById('admin-close-btn');
-        this.exportBtn = document.getElementById('excel-export-btn');
-        this.addBtn = document.getElementById('add-guest-btn');
+        this.onUpdate = onUpdate;
         this.init();
     }
 
     init() {
-        this.triggerBtn.addEventListener('click', () => {
-            document.getElementById('admin-password').value = '';
-            document.getElementById('admin-auth').classList.remove('hidden');
-            document.getElementById('admin-panel').classList.add('hidden');
-            this.dialog.showModal();
-        });
+        const triggerBtn = document.getElementById('admin-trigger-btn');
+        const dialog = document.getElementById('admin-dialog');
+        const loginBtn = document.getElementById('admin-login-btn');
+        const closeBtn = document.getElementById('admin-close-btn');
 
-        this.closeBtn.addEventListener('click', () => this.dialog.close());
+        if (triggerBtn && dialog) {
+            triggerBtn.addEventListener('click', () => {
+                document.getElementById('admin-password').value = '';
+                document.getElementById('admin-auth').classList.remove('hidden');
+                document.getElementById('admin-panel').classList.add('hidden');
+                dialog.showModal();
+            });
+        }
 
-        this.loginBtn.addEventListener('click', () => {
-            const pwd = document.getElementById('admin-password').value;
-            if (pwd === "admin123") {
-                document.getElementById('admin-auth').classList.add('hidden');
-                document.getElementById('admin-panel').classList.remove('hidden');
-                this.renderAdminList();
-                this.populateTableSelect();
-            } else {
-                alert("Falsches Passwort!");
-            }
-        });
+        if (closeBtn && dialog) {
+            closeBtn.addEventListener('click', () => dialog.close());
+        }
 
-        this.exportBtn.addEventListener('click', () => exportToExcel(this.data.guests, this.data.tables));
+        if (loginBtn) {
+            loginBtn.addEventListener('click', async () => {
+                const passwordInput = document.getElementById('admin-password').value;
+                
+                // Hier wird das eingegebene Passwort sicher per SHA-256 gehasht
+                const hashedPassword = await this.hashPassword(passwordInput);
 
-        this.addBtn.addEventListener('click', () => {
-            const name = document.getElementById('new-guest-name').value.trim();
-            const seat = parseInt(document.getElementById('new-guest-seat').value);
-            const tableId = document.getElementById('new-guest-table').value;
+                // SHA-256 Hash für das Passwort "hochzeit"
+                // Wenn du ein anderes Passwort möchtest, kannst du hier den Hash anpassen.
+                const correctHash = "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5"; 
 
-            if (!name || isNaN(seat)) {
-                alert("Bitte Name und Sitzplatz angeben.");
-                return;
-            }
+                if (hashedPassword === correctHash) {
+                    document.getElementById('admin-auth').classList.add('hidden');
+                    document.getElementById('admin-panel').classList.remove('hidden');
+                    this.renderAdminList();
+                } else {
+                    alert("Falsches Passwort!");
+                }
+            });
+        }
 
-            const newGuest = { id: 'g_' + Date.now(), name, seat, tableId };
-            this.data.guests.push(newGuest);
-            this.onDataChanged(this.data);
-            this.renderAdminList();
-            document.getElementById('new-guest-name').value = '';
-            document.getElementById('new-guest-seat').value = '';
-            alert("Gast erfolgreich hinzugefügt!");
-        });
+        document.getElementById('add-guest-btn').addEventListener('click', () => this.addNewGuest());
+        
+        // Tabellen-Dropdown im Admin-Modal füllen
+        const select = document.getElementById('new-guest-table');
+        if (select && this.data.tables) {
+            select.innerHTML = this.data.tables.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+        }
     }
 
-    populateTableSelect() {
-        const select = document.getElementById('new-guest-table');
-        select.innerHTML = '';
-        this.data.tables.forEach(t => {
-            const opt = document.createElement('option');
-            opt.value = t.id;
-            opt.innerText = t.name;
-            select.appendChild(opt);
-        });
+    async hashPassword(string) {
+        const msgUint8 = new TextEncoder().encode(string);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
     renderAdminList() {
-        const listDiv = document.getElementById('admin-guest-list');
-        listDiv.innerHTML = '';
-        this.data.guests.forEach((g, index) => {
-            const item = document.createElement('div');
-            item.style.display = 'flex';
-            item.style.justifyContent = 'space-between';
-            item.style.padding = '4px 0';
-            item.style.borderBottom = '1px solid #eee';
-            
-            const table = this.data.tables.find(t => t.id === g.tableId);
-            item.innerHTML = `<span>${g.name} (Pl. ${g.seat}, ${table ? table.name : 'Tisch'})</span>`;
-            
-            const delBtn = document.createElement('button');
-            delBtn.innerText = '❌';
-            delBtn.style.border = 'none';
-            delBtn.style.background = 'transparent';
-            delBtn.style.cursor = 'pointer';
-            delBtn.onclick = () => {
-                this.data.guests.splice(index, 1);
-                this.onDataChanged(this.data);
-                this.renderAdminList();
-            };
+        const listContainer = document.getElementById('admin-guest-list');
+        if (!listContainer) return;
 
-            item.appendChild(delBtn);
-            listDiv.appendChild(item);
+        listContainer.innerHTML = this.data.guests.map(g => {
+            const table = this.data.tables.find(t => t.id === g.tableId);
+            return `
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:0.3rem 0; border-bottom:1px solid #f0f0f0;">
+                    <span><b>${g.name}</b> (Platz ${g.seat} - ${table ? table.name : 'Kein Tisch'})</span>
+                    <button data-id="${g.id}" class="delete-guest-btn btn-secondary" style="font-size:0.7rem; padding:0.2rem 0.4rem;">Löschen</button>
+                </div>
+            `;
+        }).join('');
+
+        // Löschen-Buttons Event Listener
+        listContainer.querySelectorAll('.delete-guest-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = e.target.getAttribute('data-id');
+                this.data.guests = this.data.guests.filter(g => g.id !== id);
+                this.renderAdminList();
+                if (this.onUpdate) this.onUpdate(this.data);
+            });
         });
+    }
+
+    addNewGuest() {
+        const name = document.getElementById('new-guest-name').value.trim();
+        const seat = document.getElementById('new-guest-seat').value.trim();
+        const tableId = document.getElementById('new-guest-table').value;
+
+        if (!name) {
+            alert("Bitte Namen eingeben!");
+            return;
+        }
+
+        const newGuest = {
+            id: 'g_' + Date.now(),
+            name: name,
+            seat: seat || "0",
+            tableId: tableId
+        };
+
+        this.data.guests.push(newGuest);
+        document.getElementById('new-guest-name').value = '';
+        document.getElementById('new-guest-seat').value = '';
+        
+        this.renderAdminList();
+        if (this.onUpdate) this.onUpdate(this.data);
+        alert("Gast erfolgreich hinzugefügt!");
     }
 }
