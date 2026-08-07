@@ -14,7 +14,7 @@
     <header class="header">
         <h1 id="app-title">Anja & Dino</h1>
         <p id="app-subtitle">Finde deinen Sitzplatz</p>
-        <!-- Admin Trigger (Links unten bzw. im Header dezent) -->
+        <!-- Admin Trigger (Links unten) -->
         <button id="admin-trigger-btn" class="btn-admin-trigger" title="Admin Konsole">🔒 Admin</button>
     </header>
 
@@ -26,7 +26,9 @@
                 <input type="text" id="search-input" placeholder="Name eingeben (z.B. Max)..." autocomplete="off">
                 <div id="search-results" class="results-dropdown"></div>
             </div>
-            <div class="welcome-actions" style="margin-top: 1rem;">
+            <div class="welcome-actions" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                <!-- NEU: Button zum direkten Anzeigen des Saalplans auf der Willkommensseite -->
+                <button id="show-map-btn" class="btn-gold">🗺️ Saalplan anzeigen</button>
                 <button id="pdf-download-btn" class="btn-creme">📥 Saalplan als PDF herunterladen</button>
             </div>
         </section>
@@ -69,7 +71,7 @@
     <dialog id="guestbook-dialog" class="modal">
         <h3>❤️ Nachricht für Anja & Dino</h3>
         <form id="guestbook-form">
-            <input type="text" id="gb-author" placeholder="Dein Name" required style="width:150%; padding:0.5rem; margin-bottom:0.5rem; border:1px solid #ccc; border-radius:6px;">
+            <input type="text" id="gb-author" placeholder="Dein Name" required style="width:100%; padding:0.5rem; margin-bottom:0.5rem; border:1px solid #ccc; border-radius:6px;">
             <textarea id="gb-message" placeholder="Deine Wünsche..." required style="width:100%; padding:0.5rem; margin-bottom:0.5rem; border:1px solid #ccc; border-radius:6px; height:80px;"></textarea>
             <div class="modal-actions">
                 <button type="button" id="gb-close-btn" class="btn-secondary">Abbrechen</button>
@@ -78,7 +80,7 @@
         </form>
     </dialog>
 
-    <!-- Admin Modal (Links unten / Passwort geschützt) -->
+    <!-- Admin Modal -->
     <dialog id="admin-dialog" class="modal admin-modal-pos">
         <h3>🔒 Admin-Konsole</h3>
         <div id="admin-auth">
