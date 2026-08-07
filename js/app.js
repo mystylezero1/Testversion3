@@ -21,7 +21,6 @@ class WeddingApp {
         });
 
         document.getElementById('reset-map-btn').addEventListener('click', () => this.resetMap());
-        document.getElementById('show-map-btn').addEventListener('click', () => this.showFullMap());
         document.getElementById('pdf-download-btn').addEventListener('click', () => {
             window.print();
         });
@@ -52,7 +51,18 @@ class WeddingApp {
             marker.id = `marker-${table.id}`;
             marker.style.left = `${table.x}%`;
             marker.style.top = `${table.y}%`;
-            marker.innerText = table.name;
+
+            // Finde alle Gäste an diesem Tisch
+            const tableGuests = this.data.guests.filter(g => g.tableId === table.id);
+            const guestNames = tableGuests.length > 0 
+                ? tableGuests.map(g => g.name).join(', ') 
+                : 'Frei';
+
+            marker.innerHTML = `
+                <div class="table-title">${table.name}</div>
+                <div class="table-guests" title="${guestNames}">${guestNames}</div>
+            `;
+
             layer.appendChild(marker);
         });
     }
@@ -79,7 +89,7 @@ class WeddingApp {
                 }, 5000);
 
                 const container = document.getElementById('map-container');
-                const scale = 2.0;
+                const scale = 1.6;
                 const tx = -(table.x * scale) + 50;
                 const ty = -(table.y * scale) + 50;
                 container.style.transform = `translate(${tx}%, ${ty}%) scale(${scale})`;
@@ -87,11 +97,6 @@ class WeddingApp {
         }
 
         triggerConfetti();
-    }
-
-    showFullMap() {
-        document.getElementById('map-section').classList.remove('hidden');
-        this.resetMap();
     }
 
     resetMap() {
