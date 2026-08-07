@@ -1,80 +1,12 @@
-:root {
-    --gold: #D4AF37;
-    --gold-light: #F4E8C1;
-    --gold-dark: #A38018;
-    --creme: #FAF7F2;
-    --white: #FFFFFF;
-    --dark: #2A2A2A;
-    --shadow: 0 8px 25px rgba(0,0,0,0.08);
-    --radius: 14px;
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: var(--creme);
-    color: var(--dark);
-    display: flex; flex-direction: column; align-items: center;
-    min-height: 100vh; padding: 0.5rem;
-    overflow-x: hidden; /* Verhindert jegliches seitliches Scrollen */
-}
-
-#confetti-canvas {
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 999;
-}
-
-.header {
-    text-align: center; margin-bottom: 0.75rem; position: relative; width: 100%; max-width: 650px;
-}
-.header h1 { font-family: Georgia, serif; color: var(--gold-dark); font-size: 1.8rem; }
-.header p { color: #777; font-size: 0.85rem; margin-top: 0.2rem; }
-
-.btn-admin-trigger {
-    position: fixed; bottom: 10px; left: 10px;
-    background: var(--white); border: 1px solid var(--gold);
-    color: var(--gold-dark); padding: 0.4rem 0.7rem; border-radius: 20px;
-    cursor: pointer; box-shadow: var(--shadow); z-index: 100; font-size: 0.75rem;
-}
-
-.main-container {
-    width: 100%; max-width: 650px; display: flex; flex-direction: column; gap: 1rem;
-}
-
-.card {
-    background: var(--white); padding: 1rem;
-    border-radius: var(--radius); box-shadow: var(--shadow);
-    border: 1px solid var(--gold-light);
-}
-
-.hidden { display: none !important; }
-
-.search-box { position: relative; margin-top: 0.5rem; }
-.search-box input {
-    width: 100%; padding: 0.75rem 1rem; font-size: 0.95rem;
-    border: 2px solid var(--gold-light); border-radius: 10px;
-    outline: none; background: var(--creme);
-}
-.search-box input:focus { border-color: var(--gold); }
-
-.results-dropdown {
-    position: absolute; top: 105%; left: 0; right: 0;
-    background: var(--white); border: 1px solid var(--gold-light);
-    border-radius: 10px; box-shadow: var(--shadow);
-    max-height: 180px; overflow-y: auto; z-index: 20;
-}
-.result-item { padding: 0.6rem 1rem; cursor: pointer; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; }
-.result-item:hover { background: var(--gold-light); }
-
-/* Saalplan Viewport – Garantiert KEIN Scrollen, perfekt skaliert */
+/* Saalplan Viewport – Fester Rahmen, kein Scrollen */
 .map-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;}
 .map-viewport {
-    width: 100%; height: 480px; overflow: hidden; position: relative;
+    width: 100%; height: 520px; overflow: hidden; position: relative;
     border-radius: 10px; background: var(--creme); border: 1px solid var(--gold-light);
 }
 
 .map-container {
-    position: relative; width: 100%; height: 100%;
+    position: absolute; width: 100%; height: 100%; top: 0; left: 0;
     transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
     transform-origin: center center;
 }
@@ -90,22 +22,22 @@ body {
     width: 95px !important; height: 35px !important; font-size: 0.65rem; padding: 2px;
 }
 
-/* Tische mit Namen-Anzeige */
+/* Tische mit Namen-Anzeige im perfekten Format */
 .table-marker {
     position: absolute; transform: translate(-50%, -50%);
     background: var(--white); border: 2px solid var(--gold);
-    border-radius: 6px; width: 75px; height: 45px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    font-weight: bold; color: var(--gold-dark); font-size: 0.7rem;
+    border-radius: 6px; width: 90px; height: 60px;
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+    font-weight: bold; color: var(--gold-dark); 
     box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.3s ease;
-    padding: 2px; text-align: center; overflow: hidden;
+    padding: 3px; text-align: center; overflow: hidden;
 }
 
-.table-marker .table-title { font-size: 0.65rem; color: var(--gold-dark); border-bottom: 1px solid var(--gold-light); width: 100%; margin-bottom: 1px; }
-.table-marker .table-guests { font-size: 0.55rem; color: #444; line-height: 1.1; max-height: 26px; overflow: hidden; width: 100%; }
+.table-marker .table-title { font-size: 0.65rem; color: var(--gold-dark); border-bottom: 1px solid var(--gold-light); width: 100%; margin-bottom: 2px; }
+.table-marker .table-guests { font-size: 0.5rem; color: #444; line-height: 1.1; width: 100%; word-break: break-word; }
 
 .table-marker.braut {
-    width: 140px; height: 45px; background: var(--gold-light);
+    width: 160px; height: 55px; background: var(--gold-light);
 }
 
 .table-marker.highlight {
@@ -123,20 +55,4 @@ body {
 .speech-banner {
     margin-top: 0.75rem; background: var(--gold-light); padding: 0.5rem;
     border-radius: 8px; text-align: center; color: var(--gold-dark); font-weight: bold; font-size: 0.85rem;
-}
-
-.btn-gold { background: var(--gold); color: var(--white); border: none; padding: 0.65rem 1rem; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; text-align: center; font-size: 0.9rem; }
-.btn-creme { background: var(--gold-light); color: var(--gold-dark); border: none; padding: 0.65rem 1rem; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; text-align: center; font-size: 0.9rem; }
-.btn-secondary { background: #e0e0e0; color: #333; border: none; padding: 0.4rem 0.8rem; border-radius: 8px; cursor: pointer; font-size: 0.8rem; }
-
-.modal { border: none; border-radius: var(--radius); padding: 1.2rem; max-width: 380px; width: 90%; margin: auto; box-shadow: var(--shadow); }
-.modal::backdrop { background: rgba(0,0,0,0.5); }
-.modal-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.75rem; }
-.modal-list { display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.5rem; }
-
-@media print {
-    body * { visibility: hidden; }
-    #map-section, #map-section * { visibility: visible; }
-    #map-section { position: absolute; left: 0; top: 0; width: 100%; height: 100%; border: none; box-shadow: none; }
-    #reset-map-btn { display: none !important; }
 }
