@@ -43,7 +43,6 @@ class WeddingApp {
             const res = await fetch('data.json');
             if (!res.ok) throw new Error('Netzwerk-Antwort war nicht ok');
             this.data = await res.json();
-            console.log("Daten erfolgreich geladen:", this.data);
             this.renderMapMarkers();
         } catch (e) {
             console.error("Fehler beim Laden der data.json:", e);
@@ -64,7 +63,6 @@ class WeddingApp {
             marker.style.left = `${table.x}%`;
             marker.style.top = `${table.y}%`;
 
-            // Alle Gäste dieses Tisches heraussuchen
             const tableGuests = this.data.guests.filter(g => g.tableId === table.id);
             const guestNames = tableGuests.length > 0 
                 ? tableGuests.map(g => g.name).join(', ') 
@@ -109,9 +107,9 @@ class WeddingApp {
 
                 const container = document.getElementById('map-container');
                 if (container) {
-                    const scale = 1.5;
-                    const tx = -(table.x * scale) + 50;
-                    const ty = -(table.y * scale) + 50;
+                    const scale = 1.4;
+                    const tx = (50 - table.x);
+                    const ty = (50 - table.y);
                     container.style.transform = `translate(${tx}%, ${ty}%) scale(${scale})`;
                 }
             }
