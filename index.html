@@ -19,7 +19,6 @@
         <header class="header">
             <h1 id="app-title">Anja & Dino</h1>
             <p id="app-subtitle">Finde deinen Sitzplatz</p>
-            <!-- Admin Button: Nur auf Desktop sichtbar -->
             <button id="admin-trigger-btn" class="btn-admin-desktop desktop-only" title="Admin Konsole">⚙️ Admin</button>
         </header>
 
@@ -35,6 +34,8 @@
             <section id="map-section" class="card map-card hidden">
                 <div class="map-header">
                     <h3 id="target-guest-info">Saalplan</h3>
+                    <!-- Button damit Besucher jederzeit die Gesamtkarte sehen können -->
+                    <button id="reset-map-btn" class="btn-secondary" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">🗺️ Gesamtkarte</button>
                 </div>
                 <div id="map-viewport" class="map-viewport">
                     <div id="map-container" class="map-container">
@@ -46,7 +47,6 @@
         </main>
     </div>
 
-    <!-- Auswahlfenster bei doppelten Namen -->
     <dialog id="disambiguation-dialog" class="modal">
         <h3>Mehrere Personen gefunden</h3>
         <p>Bitte wähle deinen genauen Platz aus:</p>
@@ -56,7 +56,6 @@
         </div>
     </dialog>
 
-    <!-- Admin Dialog -->
     <dialog id="admin-dialog" class="modal">
         <h3>Admin-Konsole (Schwester)</h3>
         <div id="admin-auth">
@@ -66,7 +65,7 @@
         </div>
         <div id="admin-panel" class="hidden">
             <p style="color: green; font-weight: bold; margin-bottom: 1rem;">Erfolgreich eingeloggt!</p>
-            <p style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">Hier können später Tische und Gäste hinzugefügt oder gelöscht werden.</p>
+            <p style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">Hier werden später Tische und Gäste verwaltet.</p>
             <button id="admin-close-btn" class="btn-secondary">Schließen</button>
         </div>
     </dialog>
