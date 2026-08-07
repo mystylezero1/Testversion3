@@ -122,3 +122,23 @@ body {
 .modal::backdrop { background: rgba(0,0,0,0.5); }
 .modal-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem; }
 .modal-list { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1rem; }
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #map-section, #map-section * {
+        visibility: visible;
+    }
+    #map-section {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+        box-shadow: none;
+    }
+    #reset-map-btn, .action-footer {
+        display: none !important;
+    }
+}
