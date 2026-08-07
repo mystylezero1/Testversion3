@@ -25,17 +25,13 @@ export class AdminModule {
         }
 
         if (loginBtn) {
-            loginBtn.addEventListener('click', async () => {
+            loginBtn.addEventListener('click', () => {
                 const passwordInput = document.getElementById('admin-password').value;
                 
-                // Hier wird das eingegebene Passwort sicher per SHA-256 gehasht
-                const hashedPassword = await this.hashPassword(passwordInput);
+                // Hier kannst du das Passwort nach Wunsch anpassen
+                const correctPassword = "hochzeit"; 
 
-                // SHA-256 Hash für das Passwort "hochzeit"
-                // Wenn du ein anderes Passwort möchtest, kannst du hier den Hash anpassen.
-                const correctHash = "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5"; 
-
-                if (hashedPassword === correctHash) {
+                if (passwordInput === correctPassword) {
                     document.getElementById('admin-auth').classList.add('hidden');
                     document.getElementById('admin-panel').classList.remove('hidden');
                     this.renderAdminList();
@@ -47,18 +43,10 @@ export class AdminModule {
 
         document.getElementById('add-guest-btn').addEventListener('click', () => this.addNewGuest());
         
-        // Tabellen-Dropdown im Admin-Modal füllen
         const select = document.getElementById('new-guest-table');
         if (select && this.data.tables) {
             select.innerHTML = this.data.tables.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
         }
-    }
-
-    async hashPassword(string) {
-        const msgUint8 = new TextEncoder().encode(string);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
     renderAdminList() {
@@ -75,7 +63,6 @@ export class AdminModule {
             `;
         }).join('');
 
-        // Löschen-Buttons Event Listener
         listContainer.querySelectorAll('.delete-guest-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const id = e.target.getAttribute('data-id');
