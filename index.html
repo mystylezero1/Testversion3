@@ -19,7 +19,8 @@
         <header class="header">
             <h1 id="app-title">Anja & Dino</h1>
             <p id="app-subtitle">Finde deinen Sitzplatz</p>
-            <button id="admin-trigger-btn" class="btn-icon desktop-only">⚙️ Admin</button>
+            <!-- Admin Button: Nur auf Desktop sichtbar -->
+            <button id="admin-trigger-btn" class="btn-admin-desktop desktop-only" title="Admin Konsole">⚙️ Admin</button>
         </header>
 
         <main class="main-container">
@@ -35,7 +36,6 @@
                 <div class="map-header">
                     <h3 id="target-guest-info">Saalplan</h3>
                 </div>
-                <!-- Der stabile Image-Viewport -->
                 <div id="map-viewport" class="map-viewport">
                     <div id="map-container" class="map-container">
                         <img src="assets/saalplan.jpg" id="map-image" alt="Saalplan" />
@@ -46,12 +46,28 @@
         </main>
     </div>
 
+    <!-- Auswahlfenster bei doppelten Namen -->
     <dialog id="disambiguation-dialog" class="modal">
         <h3>Mehrere Personen gefunden</h3>
         <p>Bitte wähle deinen genauen Platz aus:</p>
         <div id="disambiguation-list" class="modal-list"></div>
         <div class="modal-actions">
             <button type="button" id="disambiguation-close-btn" class="btn-secondary">Abbrechen</button>
+        </div>
+    </dialog>
+
+    <!-- Admin Dialog -->
+    <dialog id="admin-dialog" class="modal">
+        <h3>Admin-Konsole (Schwester)</h3>
+        <div id="admin-auth">
+            <p style="margin-bottom: 0.5rem; font-size: 0.9rem; color: #555;">Passwort eingeben:</p>
+            <input type="password" id="admin-password" placeholder="Passwort" style="width:100%; padding:0.5rem; margin-bottom:1rem; border:1px solid #ccc; border-radius:6px;">
+            <button id="admin-login-btn" class="btn-gold">Einloggen</button>
+        </div>
+        <div id="admin-panel" class="hidden">
+            <p style="color: green; font-weight: bold; margin-bottom: 1rem;">Erfolgreich eingeloggt!</p>
+            <p style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">Hier können später Tische und Gäste hinzugefügt oder gelöscht werden.</p>
+            <button id="admin-close-btn" class="btn-secondary">Schließen</button>
         </div>
     </dialog>
 
