@@ -9,18 +9,14 @@ class WeddingApp {
 
     async init() {
         if (this.checkExpiration()) return;
-
         this.applyConfig();
         await this.loadData();
-        
-        // Suchfunktion starten
         initSearch(this.data.guests, (guest) => this.onGuestSelected(guest));
     }
 
     checkExpiration() {
         const now = new Date();
         const expiryDate = new Date(this.config.expirationDate);
-        
         if (now > expiryDate) {
             document.getElementById('app-content').classList.add('hidden');
             document.getElementById('expiry-screen').classList.remove('hidden');
@@ -53,34 +49,30 @@ class WeddingApp {
             marker.style.left = `${table.x}%`;
             marker.style.top = `${table.y}%`;
             marker.id = `marker-${table.id}`;
-            marker.classList.add('table-marker-dot');
+            marker.classList.add('css-table'); // Nutzt jetzt unser elegantes CSS-Design
+            marker.innerText = table.name; // Schreibt den Namen (z.B. "Tisch 3") in die Box
             
             layer.appendChild(marker);
         });
     }
 
     onGuestSelected(guest) {
-        // 1. Map anzeigen
         document.getElementById('map-section').classList.remove('hidden');
         
-        // 2. Tischinformationen auslesen
         const table = this.data.tables.find(t => t.id === guest.tableId);
         const tableName = table ? table.name : "Unbekannter Tisch";
         document.getElementById('target-guest-info').innerText = `${guest.name} – ${tableName}, Platz ${guest.seat}`;
         
         if (table) {
-            // 3. Alle alten Highlights entfernen
-            document.querySelectorAll('.table-marker-dot').forEach(m => m.classList.remove('highlight'));
+            document.querySelectorAll('.css-table').forEach(m => m.classList.remove('highlight'));
             
-            // 4. Neuen Highlight-Marker setzen
             const targetMarker = document.getElementById(`marker-${table.id}`);
             if (targetMarker) {
                 targetMarker.classList.add('highlight');
             }
 
-            // 5. Sanfter Zoom und Zentrierung auf den Tisch
             const container = document.getElementById('map-container');
-            const scale = 2.2; 
+            const scale = 2.0; 
             
             const translateX = -(table.x * scale) + 50; 
             const translateY = -(table.y * scale) + 50;
@@ -88,12 +80,9 @@ class WeddingApp {
             container.style.transform = `translate(${translateX}%, ${translateY}%) scale(${scale})`;
         }
 
-        // 6. Konfetti!
         if (window.confetti) {
             window.confetti({ 
-                particleCount: 100, 
-                spread: 70, 
-                origin: { y: 0.6 },
+                particleCount: 100, spread: 70, origin: { y: 0.6 },
                 colors: ['#D4AF37', '#F4E8C1', '#FFFFFF']
             });
         }
