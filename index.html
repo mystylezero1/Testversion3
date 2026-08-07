@@ -3,50 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hochzeit Anja & Dino - Sitzplan</title>
+    <title>Hochzeit Anja & Dino</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
     <canvas id="confetti-canvas"></canvas>
 
-    <div id="expiry-screen" class="expiry-message hidden">
-        <h1>Vielen Dank!</h1>
-        <p>Es war eine unvergessliche Feier.</p>
-    </div>
+    <header class="header">
+        <h1 id="app-title">Anja & Dino</h1>
+        <p id="app-subtitle">Finde deinen Sitzplatz</p>
+        <!-- Admin Trigger (Links unten bzw. im Header dezent) -->
+        <button id="admin-trigger-btn" class="btn-admin-trigger" title="Admin Konsole">🔒 Admin</button>
+    </header>
 
-    <div id="app-content">
-        <header class="header">
-            <h1 id="app-title">Anja & Dino</h1>
-            <p id="app-subtitle">Finde deinen Sitzplatz</p>
-            <button id="admin-trigger-btn" class="btn-admin-desktop desktop-only" title="Admin Konsole">⚙️ Admin</button>
-        </header>
+    <main class="main-container">
+        <!-- Willkommensseite / Suche -->
+        <section id="search-section" class="card">
+            <h2>Gast finden</h2>
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Name eingeben (z.B. Max)..." autocomplete="off">
+                <div id="search-results" class="results-dropdown"></div>
+            </div>
+            <div class="welcome-actions" style="margin-top: 1rem;">
+                <button id="pdf-download-btn" class="btn-creme">📥 Saalplan als PDF herunterladen</button>
+            </div>
+        </section>
 
-        <main class="main-container">
-            <section id="search-section" class="card">
-                <h2>Gast finden</h2>
-                <div class="search-box">
-                    <input type="text" id="search-input" placeholder="Name eingeben (z.B. Max)..." autocomplete="off">
-                    <div id="search-results" class="results-dropdown"></div>
+        <!-- Saalplan Ansicht -->
+        <section id="map-section" class="card map-card hidden">
+            <div class="map-header">
+                <h3 id="target-guest-info">Saalplan</h3>
+                <button id="reset-map-btn" class="btn-secondary">🗺️ Gesamtkarte</button>
+            </div>
+            <div id="map-viewport" class="map-viewport">
+                <div id="map-container" class="map-container">
+                    <div class="room-zone" style="bottom: 10px; left: 10px; width: 90px; height: 35px;">🚪 Eingang</div>
+                    <div class="room-zone" style="bottom: 10px; left: 120px; right: 10px; height: 35px;">🎧 DJ & Tanzfläche</div>
+                    <div id="tables-layer" class="tables-layer"></div>
                 </div>
-            </section>
+            </div>
+            <!-- Tisch-Spruch Banner -->
+            <div id="speech-banner" class="speech-banner hidden">
+                <span id="speech-text"></span>
+            </div>
+            <div class="action-footer" style="margin-top: 1rem;">
+                <a id="photo-link" href="#" target="_blank" class="btn-gold">📷 Fotos teilen</a>
+                <button id="guestbook-open-btn" class="btn-creme">📝 Gästebuch</button>
+            </div>
+        </section>
+    </main>
 
-            <section id="map-section" class="card map-card hidden">
-                <div class="map-header">
-                    <h3 id="target-guest-info">Saalplan</h3>
-                    <!-- Button damit Besucher jederzeit die Gesamtkarte sehen können -->
-                    <button id="reset-map-btn" class="btn-secondary" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">🗺️ Gesamtkarte</button>
-                </div>
-                <div id="map-viewport" class="map-viewport">
-                    <div id="map-container" class="map-container">
-                        <img src="assets/saalplan.jpg" id="map-image" alt="Saalplan" />
-                        <div id="tables-layer" class="tables-layer"></div>
-                    </div>
-                </div>
-            </section>
-        </main>
-    </div>
-
+    <!-- Dialog bei doppelten Namen -->
     <dialog id="disambiguation-dialog" class="modal">
         <h3>Mehrere Personen gefunden</h3>
         <p>Bitte wähle deinen genauen Platz aus:</p>
@@ -56,17 +65,41 @@
         </div>
     </dialog>
 
-    <dialog id="admin-dialog" class="modal">
-        <h3>Admin-Konsole (Schwester)</h3>
+    <!-- Gästebuch Modal -->
+    <dialog id="guestbook-dialog" class="modal">
+        <h3>❤️ Nachricht für Anja & Dino</h3>
+        <form id="guestbook-form">
+            <input type="text" id="gb-author" placeholder="Dein Name" required style="width:150%; padding:0.5rem; margin-bottom:0.5rem; border:1px solid #ccc; border-radius:6px;">
+            <textarea id="gb-message" placeholder="Deine Wünsche..." required style="width:100%; padding:0.5rem; margin-bottom:0.5rem; border:1px solid #ccc; border-radius:6px; height:80px;"></textarea>
+            <div class="modal-actions">
+                <button type="button" id="gb-close-btn" class="btn-secondary">Abbrechen</button>
+                <button type="submit" class="btn-gold">Senden</button>
+            </div>
+        </form>
+    </dialog>
+
+    <!-- Admin Modal (Links unten / Passwort geschützt) -->
+    <dialog id="admin-dialog" class="modal admin-modal-pos">
+        <h3>🔒 Admin-Konsole</h3>
         <div id="admin-auth">
-            <p style="margin-bottom: 0.5rem; font-size: 0.9rem; color: #555;">Passwort eingeben:</p>
-            <input type="password" id="admin-password" placeholder="Passwort" style="width:100%; padding:0.5rem; margin-bottom:1rem; border:1px solid #ccc; border-radius:6px;">
+            <input type="password" id="admin-password" placeholder="Passwort" style="width:100%; padding:0.6rem; margin-bottom:1rem; border:1px solid #ccc; border-radius:6px;">
             <button id="admin-login-btn" class="btn-gold">Einloggen</button>
         </div>
         <div id="admin-panel" class="hidden">
-            <p style="color: green; font-weight: bold; margin-bottom: 1rem;">Erfolgreich eingeloggt!</p>
-            <p style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">Hier werden später Tische und Gäste verwaltet.</p>
-            <button id="admin-close-btn" class="btn-secondary">Schließen</button>
+            <div class="admin-tools" style="display:flex; gap:0.5rem; margin-bottom:1rem;">
+                <button id="excel-export-btn" class="btn-creme" style="font-size:0.8rem;">Export</button>
+                <button id="excel-import-btn" class="btn-creme" style="font-size:0.8rem;">Import</button>
+                <input type="file" id="excel-import-file" accept=".xlsx, .xls" class="hidden">
+            </div>
+            <div style="margin-bottom: 1rem; border-top: 1px solid #eee; padding-top: 0.5rem;">
+                <h4>Gast hinzufügen</h4>
+                <input type="text" id="new-guest-name" placeholder="Name" style="width:100%; padding:0.4rem; margin-bottom:0.3rem;">
+                <input type="number" id="new-guest-seat" placeholder="Sitzplatz-Nr" style="width:100%; padding:0.4rem; margin-bottom:0.3rem;">
+                <select id="new-guest-table" style="width:100%; padding:0.4rem; margin-bottom:0.5rem;"></select>
+                <button id="add-guest-btn" class="btn-gold" style="font-size:0.8rem;">Speichern</button>
+            </div>
+            <div id="admin-guest-list" class="admin-list" style="max-height:150px; overflow-y:auto; font-size:0.85rem;"></div>
+            <button id="admin-close-btn" class="btn-secondary" style="margin-top:1rem;">Schließen</button>
         </div>
     </dialog>
 
