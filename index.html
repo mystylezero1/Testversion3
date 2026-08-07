@@ -12,19 +12,17 @@
     <!-- Canvas für Konfetti Animation -->
     <canvas id="confetti-canvas"></canvas>
 
-    <!-- Ablaufdatum-Screen (wird nach dem 30.08.2026 gezeigt) -->
+    <!-- Ablaufdatum-Screen -->
     <div id="expiry-screen" class="expiry-message hidden">
         <h1>Vielen Dank!</h1>
         <p>Es war eine unvergessliche Feier.</p>
         <p>Der interaktive Sitzplan ist nun geschlossen.</p>
     </div>
 
-    <!-- App-Inhalt (für Gäste und Admin) -->
     <div id="app-content">
         <header class="header">
             <h1 id="app-title">Anja & Dino</h1>
             <p id="app-subtitle">Finde deinen Sitzplatz</p>
-            <!-- Admin Button: Nur am Desktop sichtbar -->
             <button id="admin-trigger-btn" class="btn-icon desktop-only">⚙️ Admin</button>
         </header>
 
@@ -38,15 +36,20 @@
                 </div>
             </section>
 
-            <!-- Saalplan (Wird erst nach der Suche sichtbar) -->
+            <!-- Pure CSS Saalplan -->
             <section id="map-section" class="card map-card hidden">
                 <div class="map-header">
                     <h3 id="target-guest-info">Saalplan</h3>
                 </div>
                 <div id="map-viewport" class="map-viewport">
                     <div id="map-container" class="map-container">
-                        <!-- Hier wird dein Grundriss geladen -->
-                        <img src="assets/saalplan.jpg" id="map-image" alt="Saalplan" onerror="this.style.display='none'; alert('Bild nicht gefunden. Bitte prüfe, ob es assets/saalplan.jpg heißt!');" />
+                        
+                        <!-- Statische Raum-Elemente (Eingang, DJ, Buffet) -->
+                        <div class="room-element" style="bottom: 2%; left: 10%; width: 25%;">🚪 Eingang</div>
+                        <div class="room-element" style="bottom: 2%; left: 50%; transform: translateX(-50%); width: 40%;">🎧 DJ & Tanzfläche</div>
+                        <div class="room-element" style="top: 50%; right: 2%; transform: translateY(-50%); height: 35%; writing-mode: vertical-rl; text-align: center;">🥂 Ausschank & Buffet</div>
+                        
+                        <!-- Hier werden die Tische per JavaScript gerendert -->
                         <div id="tables-layer" class="tables-layer"></div>
                     </div>
                 </div>
@@ -54,7 +57,7 @@
         </main>
     </div>
 
-    <!-- Dialog für doppelte Namen (Auswahlfenster) -->
+    <!-- Dialog für doppelte Namen -->
     <dialog id="disambiguation-dialog" class="modal">
         <h3>Mehrere Personen gefunden</h3>
         <p>Bitte wähle deinen genauen Platz aus:</p>
@@ -64,7 +67,6 @@
         </div>
     </dialog>
 
-    <!-- Wir laden hier die Logik -->
     <script type="module" src="js/app.js"></script>
 </body>
 </html>
