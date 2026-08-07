@@ -5,5 +5,6 @@ export const CONFIG = {
     },
     title: "Willkommen zu unserer Hochzeit",
     subtitle: "Finde deinen Sitzplatz",
-    expirationDate: "2026-08-30T00:00:00"
+    expirationDate: "2026-08-30T00:00:00",
+    adminPasswordHash: "admin123" // Einfaches Demo-Passwort für deine Schwester
 };
