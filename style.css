@@ -9,134 +9,320 @@
     --radius: 14px;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+}
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background-color: var(--creme);
     color: var(--dark);
-    display: flex; flex-direction: column; align-items: center;
-    min-height: 100vh; padding: 1rem;
+    display: flex; 
+    flex-direction: column; 
+    align-items: center;
+    min-height: 100vh; 
+    padding: 1rem;
 }
 
 #confetti-canvas {
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 999;
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100vw; 
+    height: 100vh; 
+    pointer-events: none; 
+    z-index: 999;
 }
 
 .header {
-    text-align: center; margin-bottom: 1.5rem; position: relative; width: 100%; max-width: 750px;
+    text-align: center; 
+    margin-bottom: 1.5rem; 
+    position: relative; 
+    width: 100%; 
+    max-width: 750px;
 }
-.header h1 { font-family: Georgia, serif; color: var(--gold-dark); font-size: 2.2rem; }
-.header p { color: #777; margin-top: 0.4rem; }
 
+.header h1 { 
+    font-family: Georgia, serif; 
+    color: var(--gold-dark); 
+    font-size: 2.2rem; 
+}
+
+.header p { 
+    color: #777; 
+    margin-top: 0.4rem; 
+}
+
+/* Dezent unten links platzierter Admin-Button */
 .btn-admin-trigger {
-    position: fixed; bottom: 15px; left: 15px;
-    background: var(--white); border: 1px solid var(--gold);
-    color: var(--gold-dark); padding: 0.5rem 0.8rem; border-radius: 20px;
-    cursor: pointer; box-shadow: var(--shadow); z-index: 100; font-size: 0.8rem;
+    position: fixed; 
+    bottom: 15px; 
+    left: 15px;
+    background: var(--white); 
+    border: 1px solid var(--gold);
+    color: var(--gold-dark); 
+    padding: 0.5rem 0.8rem; 
+    border-radius: 20px;
+    cursor: pointer; 
+    box-shadow: var(--shadow); 
+    z-index: 100; 
+    font-size: 0.8rem;
 }
 
 .main-container {
-    width: 100%; max-width: 750px; display: flex; flex-direction: column; gap: 1.5rem;
+    width: 100%; 
+    max-width: 750px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 1.5rem;
 }
 
 .card {
-    background: var(--white); padding: 1.5rem;
-    border-radius: var(--radius); box-shadow: var(--shadow);
+    background: var(--white); 
+    padding: 1.5rem;
+    border-radius: var(--radius); 
+    box-shadow: var(--shadow);
     border: 1px solid var(--gold-light);
 }
 
-.hidden { display: none !important; }
+.hidden { 
+    display: none !important; 
+}
 
 /* Suchfeld */
-.search-box { position: relative; margin-top: 0.75rem; }
-.search-box input {
-    width: 100%; padding: 0.85rem 1rem; font-size: 1rem;
-    border: 2px solid var(--gold-light); border-radius: 10px;
-    outline: none; background: var(--creme);
+.search-box { 
+    position: relative; 
+    margin-top: 0.75rem; 
 }
-.search-box input:focus { border-color: var(--gold); }
+
+.search-box input {
+    width: 100%; 
+    padding: 0.85rem 1rem; 
+    font-size: 1rem;
+    border: 2px solid var(--gold-light); 
+    border-radius: 10px;
+    outline: none; 
+    background: var(--creme);
+}
+
+.search-box input:focus { 
+    border-color: var(--gold); 
+}
 
 .results-dropdown {
-    position: absolute; top: 105%; left: 0; right: 0;
-    background: var(--white); border: 1px solid var(--gold-light);
-    border-radius: 10px; box-shadow: var(--shadow);
-    max-height: 200px; overflow-y: auto; z-index: 20;
+    position: absolute; 
+    top: 105%; 
+    left: 0; 
+    right: 0;
+    background: var(--white); 
+    border: 1px solid var(--gold-light);
+    border-radius: 10px; 
+    box-shadow: var(--shadow);
+    max-height: 200px; 
+    overflow-y: auto; 
+    z-index: 20;
 }
-.result-item { padding: 0.75rem 1rem; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
-.result-item:hover { background: var(--gold-light); }
+
+.result-item { 
+    padding: 0.75rem 1rem; 
+    cursor: pointer; 
+    border-bottom: 1px solid #f0f0f0; 
+}
+
+.result-item:hover { 
+    background: var(--gold-light); 
+}
 
 /* Vektor-Saalplan Viewport */
-.map-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;}
+.map-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 1rem;
+}
+
 .map-viewport {
-    width: 100%; height: 600px; overflow: auto; position: relative;
-    border-radius: 10px; background: var(--creme); border: 1px solid var(--gold-light);
+    width: 100%; 
+    height: 600px; 
+    overflow: auto; 
+    position: relative;
+    border-radius: 10px; 
+    background: var(--creme); 
+    border: 1px solid var(--gold-light);
     padding: 1rem;
 }
 
 .map-container {
-    position: relative; width: 100%; min-width: 700px; height: 850px;
+    position: relative; 
+    width: 100%; 
+    min-width: 700px; 
+    height: 850px;
     transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1);
     transform-origin: 0 0;
 }
 
 .room-zone {
-    position: absolute; background: rgba(244, 232, 193, 0.5);
-    border: 1px dashed var(--gold-dark); color: var(--gold-dark);
-    display: flex; align-items: center; justify-content: center;
-    font-weight: bold; font-size: 0.75rem; border-radius: 6px;
+    position: absolute; 
+    background: rgba(244, 232, 193, 0.5);
+    border: 1px dashed var(--gold-dark); 
+    color: var(--gold-dark);
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    font-weight: bold; 
+    font-size: 0.75rem; 
+    border-radius: 6px;
+    text-align: center;
 }
 
-/* NEU: Ausschank & Buffet Box mit Drehung um -90 Grad (90 Grad nach links gedreht) */
+/* Ausschank & Buffet Kasten - optimal lesbar und ungeschnitten */
 .buffet-zone {
-    transform: rotate(-90deg);
-    transform-origin: center;
+    width: 120px !important;
+    height: 50px !important;
+    transform: none !important;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    padding: 4px;
 }
 
-/* Einheitliche Tische exakt wie im Grundriss-Raster */
+/* Einheitliche Tische */
 .table-marker {
-    position: absolute; transform: translate(-50%, -50%);
-    background: var(--white); border: 2px solid var(--gold);
-    border-radius: 8px; width: 85px; height: 45px;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: bold; color: var(--gold-dark); font-size: 0.8rem;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.05); transition: all 0.3s ease;
+    position: absolute; 
+    transform: translate(-50%, -50%);
+    background: var(--white); 
+    border: 2px solid var(--gold);
+    border-radius: 8px; 
+    width: 85px; 
+    height: 45px;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    font-weight: bold; 
+    color: var(--gold-dark); 
+    font-size: 0.8rem;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.05); 
+    transition: all 0.3s ease;
 }
 
-/* Brauttisch etwas breiter */
+/* Brauttisch */
 .table-marker.braut {
-    width: 160px; height: 50px; background: var(--gold-light);
+    width: 160px; 
+    height: 50px; 
+    background: var(--gold-light);
 }
 
 /* 5 Sekunden Blinken / Pulsieren */
 .table-marker.highlight {
-    background: var(--gold); color: var(--white); border-color: var(--white);
-    z-index: 50; animation: goldPulse 1s infinite alternate;
+    background: var(--gold); 
+    color: var(--white); 
+    border-color: var(--white);
+    z-index: 50; 
+    animation: goldPulse 1s infinite alternate;
 }
 
 @keyframes goldPulse {
-    0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.9); }
-    100% { transform: translate(-50%, -50%) scale(1.2); box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
+    0% { 
+        transform: translate(-50%, -50%) scale(1); 
+        box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.9); 
+    }
+    100% { 
+        transform: translate(-50%, -50%) scale(1.2); 
+        box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); 
+    }
 }
 
 .speech-banner {
-    margin-top: 1rem; background: var(--gold-light); padding: 0.75rem;
-    border-radius: 8px; text-align: center; color: var(--gold-dark); font-weight: bold;
+    margin-top: 1rem; 
+    background: var(--gold-light); 
+    padding: 0.75rem;
+    border-radius: 8px; 
+    text-align: center; 
+    color: var(--gold-dark); 
+    font-weight: bold;
 }
 
 /* Buttons & Modals */
-.btn-gold { background: var(--gold); color: var(--white); border: none; padding: 0.75rem 1.2rem; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; text-align: center; }
-.btn-creme { background: var(--gold-light); color: var(--gold-dark); border: none; padding: 0.75rem 1.2rem; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; text-align: center; }
-.btn-secondary { background: #e0e0e0; color: #333; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; }
+.btn-gold { 
+    background: var(--gold); 
+    color: var(--white); 
+    border: none; 
+    padding: 0.75rem 1.2rem; 
+    border-radius: 8px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    width: 100%; 
+    text-align: center; 
+}
 
-.modal { border: none; border-radius: var(--radius); padding: 1.5rem; max-width: 400px; width: 90%; margin: auto; box-shadow: var(--shadow); }
-.modal::backdrop { background: rgba(0,0,0,0.5); }
-.modal-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem; }
-.modal-list { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1rem; }
+.btn-creme { 
+    background: var(--gold-light); 
+    color: var(--gold-dark); 
+    border: none; 
+    padding: 0.75rem 1.2rem; 
+    border-radius: 8px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    width: 100%; 
+    text-align: center; 
+}
 
+.btn-secondary { 
+    background: #e0e0e0; 
+    color: #333; 
+    border: none; 
+    padding: 0.5rem 1rem; 
+    border-radius: 8px; 
+    cursor: pointer; 
+}
+
+.modal { 
+    border: none; 
+    border-radius: var(--radius); 
+    padding: 1.5rem; 
+    max-width: 400px; 
+    width: 90%; 
+    margin: auto; 
+    box-shadow: var(--shadow); 
+}
+
+.modal::backdrop { 
+    background: rgba(0,0,0,0.5); 
+}
+
+.modal-actions { 
+    display: flex; 
+    justify-content: flex-end; 
+    gap: 0.5rem; 
+    margin-top: 1rem; 
+}
+
+.modal-list { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 0.5rem; 
+    margin-top: 1rem; 
+}
+
+/* Druck-Layout für PDF-Funktion */
 @media print {
-    body * { visibility: hidden; }
-    #map-section, #map-section * { visibility: visible; }
-    #map-section { position: absolute; left: 0; top: 0; width: 100%; height: 100%; border: none; box-shadow: none; }
-    #reset-map-btn { display: none !important; }
+    body * { 
+        visibility: hidden; 
+    }
+    #map-section, #map-section * { 
+        visibility: visible; 
+    }
+    #map-section { 
+        position: absolute; 
+        left: 0; 
+        top: 0; 
+        width: 100%; 
+        height: 100%; 
+        border: none; 
+        box-shadow: none; 
+    }
+    #reset-map-btn { 
+        display: none !important; 
+    }
 }
