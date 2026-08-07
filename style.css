@@ -87,6 +87,12 @@ body {
     font-weight: bold; font-size: 0.75rem; border-radius: 6px;
 }
 
+/* NEU: Ausschank & Buffet Box mit Drehung um -90 Grad (90 Grad nach links gedreht) */
+.buffet-zone {
+    transform: rotate(-90deg);
+    transform-origin: center;
+}
+
 /* Einheitliche Tische exakt wie im Grundriss-Raster */
 .table-marker {
     position: absolute; transform: translate(-50%, -50%);
