@@ -1,1 +1,23 @@
+{
+  "tables": [
+    { "id": "tisch-1", "name": "Brauttisch", "x": 50, "y": 15, "shape": "rect" },
+    
+    { "id": "tisch-3", "name": "Tisch 3", "x": 12, "y": 35, "shape": "rect" },
+    { "id": "tisch-4", "name": "Tisch 4", "x": 30, "y": 35, "shape": "rect" },
+    { "id": "tisch-5", "name": "Tisch 5", "x": 50, "y": 35, "shape": "rect" },
+    { "id": "tisch-6", "name": "Tisch 6", "x": 70, "y": 35, "shape": "rect" },
+    { "id": "tisch-7", "name": "Tisch 7", "x": 88, "y": 35, "shape": "rect" },
 
+    { "id": "tisch-8", "name": "Tisch 8", "x": 12, "y": 55, "shape": "rect" },
+    { "id": "tisch-9", "name": "Tisch 9", "x": 30, "y": 55, "shape": "rect" },
+    { "id": "tisch-10", "name": "Tisch 10", "x": 50, "y": 55, "shape": "rect" },
+    { "id": "tisch-11", "name": "Tisch 11", "x": 70, "y": 55, "shape": "rect" },
+    { "id": "tisch-12", "name": "Tisch 12", "x": 88, "y": 55, "shape": "rect" }
+  ],
+  "guests": [
+    { "id": "g4", "name": "Anne", "seat": 1, "tableId": "tisch-1" },
+    { "id": "g3", "name": "Dino", "seat": 3, "tableId": "tisch-1" },
+    { "id": "g2", "name": "Anja", "seat": 4, "tableId": "tisch-1" },
+    { "id": "g10", "name": "Sven", "seat": 40, "tableId": "tisch-6" }
+  ]
+}
