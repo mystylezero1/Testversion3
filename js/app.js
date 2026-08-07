@@ -20,31 +20,43 @@ class WeddingApp {
             this.renderMapMarkers();
         });
 
-        document.getElementById('reset-map-btn').addEventListener('click', () => this.resetMap());
-        document.getElementById('pdf-download-btn').addEventListener('click', () => {
-            window.print();
-        });
+        const resetBtn = document.getElementById('reset-map-btn');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => this.resetMap());
+        }
+        
+        const pdfBtn = document.getElementById('pdf-download-btn');
+        if (pdfBtn) {
+            pdfBtn.addEventListener('click', () => window.print());
+        }
     }
 
     applyConfig() {
-        document.getElementById('app-title').innerText = `${this.config.names.bride} & ${this.config.names.groom}`;
-        document.getElementById('app-subtitle').innerText = this.config.subtitle;
+        const titleEl = document.getElementById('app-title');
+        const subEl = document.getElementById('app-subtitle');
+        if (titleEl) titleEl.innerText = `${this.config.names.bride} & ${this.config.names.groom}`;
+        if (subEl) subEl.innerText = this.config.subtitle;
     }
 
     async loadData() {
         try {
-            const res = await fetch('./data.json');
+            const res = await fetch('data.json');
+            if (!res.ok) throw new Error('Netzwerk-Antwort war nicht ok');
             this.data = await res.json();
+            console.log("Daten erfolgreich geladen:", this.data);
             this.renderMapMarkers();
         } catch (e) {
-            console.error("Fehler beim Laden der data.json", e);
+            console.error("Fehler beim Laden der data.json:", e);
         }
     }
 
     renderMapMarkers() {
         const layer = document.getElementById('tables-layer');
+        if (!layer) return;
         layer.innerHTML = '';
         
+        if (!this.data.tables) return;
+
         this.data.tables.forEach(table => {
             const marker = document.createElement('div');
             marker.className = table.id === 't-braut' ? 'table-marker braut' : 'table-marker';
@@ -52,7 +64,7 @@ class WeddingApp {
             marker.style.left = `${table.x}%`;
             marker.style.top = `${table.y}%`;
 
-            // Finde alle Gäste an diesem Tisch
+            // Alle Gäste dieses Tisches heraussuchen
             const tableGuests = this.data.guests.filter(g => g.tableId === table.id);
             const guestNames = tableGuests.length > 0 
                 ? tableGuests.map(g => g.name).join(', ') 
@@ -68,14 +80,21 @@ class WeddingApp {
     }
 
     onGuestSelected(guest) {
-        document.getElementById('map-section').classList.remove('hidden');
+        const mapSection = document.getElementById('map-section');
+        if (mapSection) mapSection.classList.remove('hidden');
         
         const table = this.data.tables.find(t => t.id === guest.tableId);
-        document.getElementById('target-guest-info').innerText = `${guest.name} ➔ ${table ? table.name : 'Tisch'}, Sitzplatz ${guest.seat}`;
+        const infoEl = document.getElementById('target-guest-info');
+        if (infoEl) {
+            infoEl.innerText = `${guest.name} ➔ ${table ? table.name : 'Tisch'}, Sitzplatz ${guest.seat}`;
+        }
         
         const speechBanner = document.getElementById('speech-banner');
-        document.getElementById('speech-text').innerText = getRandomSpeech();
-        speechBanner.classList.remove('hidden');
+        const speechText = document.getElementById('speech-text');
+        if (speechBanner && speechText) {
+            speechText.innerText = getRandomSpeech();
+            speechBanner.classList.remove('hidden');
+        }
 
         if (table) {
             document.querySelectorAll('.table-marker').forEach(m => m.classList.remove('highlight'));
@@ -89,10 +108,12 @@ class WeddingApp {
                 }, 5000);
 
                 const container = document.getElementById('map-container');
-                const scale = 1.6;
-                const tx = -(table.x * scale) + 50;
-                const ty = -(table.y * scale) + 50;
-                container.style.transform = `translate(${tx}%, ${ty}%) scale(${scale})`;
+                if (container) {
+                    const scale = 1.5;
+                    const tx = -(table.x * scale) + 50;
+                    const ty = -(table.y * scale) + 50;
+                    container.style.transform = `translate(${tx}%, ${ty}%) scale(${scale})`;
+                }
             }
         }
 
@@ -101,10 +122,14 @@ class WeddingApp {
 
     resetMap() {
         const container = document.getElementById('map-container');
-        container.style.transform = 'translate(0%, 0%) scale(1)';
+        if (container) {
+            container.style.transform = 'translate(0%, 0%) scale(1)';
+        }
         document.querySelectorAll('.table-marker').forEach(m => m.classList.remove('highlight'));
-        document.getElementById('target-guest-info').innerText = "Gesamter Saalplan";
-        document.getElementById('speech-banner').classList.add('hidden');
+        const infoEl = document.getElementById('target-guest-info');
+        if (infoEl) infoEl.innerText = "Gesamter Saalplan";
+        const speechBanner = document.getElementById('speech-banner');
+        if (speechBanner) speechBanner.classList.add('hidden');
     }
 }
 
