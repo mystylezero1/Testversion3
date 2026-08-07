@@ -60,7 +60,7 @@ body {
 .result-item { padding: 0.75rem 1rem; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
 .result-item:hover { background: var(--gold-light); }
 
-/* --- Saalplan Bild-Ansicht mit Zoom --- */
+/* Saalplan Bild-Ansicht mit Zoom */
 .map-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;}
 .map-viewport {
     width: 100%; height: 420px;
@@ -79,7 +79,6 @@ body {
 .map-container img { width: 100%; display: block; }
 .tables-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
-/* Der elegante Pulsierende Markierungspunkt auf dem Tisch */
 .table-marker-dot {
     position: absolute;
     transform: translate(-50%, -50%);
@@ -103,13 +102,16 @@ body {
 }
 
 /* Buttons & Modals */
+.btn-gold {
+    background: var(--gold); color: var(--white); border: none; padding: 0.6rem 1rem; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%;
+}
 .btn-creme {
     background: var(--gold-light); color: var(--gold-dark);
     border: none; padding: 0.75rem 1.2rem; border-radius: 8px;
     font-weight: bold; cursor: pointer; width: 100%; text-align: left; margin-bottom: 0.5rem;
 }
 .btn-secondary {
-    background: #e0e0e0; color: #333; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer;
+    background: #e0e0e0; color: #333; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; width: 100%;
 }
 .modal {
     border: none; border-radius: var(--border-radius);
@@ -124,13 +126,14 @@ body {
 .desktop-only { display: none; }
 @media (min-width: 1024px) {
     .desktop-only {
-        display: block; position: absolute; right: 0; top: 0;
+        display: block;
+        position: absolute; right: 0; top: 0;
         background: transparent; border: 1px solid var(--gold);
-        color: var(--gold-dark); padding: 0.5rem; border-radius: 8px; cursor: pointer;
+        color: var(--gold-dark); padding: 0.5rem 0.8rem; border-radius: 8px; cursor: pointer;
+        font-weight: bold;
     }
 }
 
-/* Expiry Screen */
 .expiry-message {
     text-align: center; background: var(--white);
     padding: 3rem 2rem; border-radius: var(--border-radius);
