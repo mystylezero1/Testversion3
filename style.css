@@ -16,7 +16,8 @@ body {
     background-color: var(--creme);
     color: var(--dark);
     display: flex; flex-direction: column; align-items: center;
-    min-height: 100vh; padding: 1rem;
+    min-height: 100vh; padding: 0.5rem;
+    overflow-x: hidden;
 }
 
 #confetti-canvas {
@@ -24,24 +25,24 @@ body {
 }
 
 .header {
-    text-align: center; margin-bottom: 1rem; width: 100%; max-width: 900px;
+    text-align: center; margin-bottom: 0.75rem; width: 100%; max-width: 900px;
 }
-.header h1 { font-family: Georgia, serif; color: var(--gold-dark); font-size: 2rem; }
-.header p { color: #777; font-size: 0.9rem; margin-top: 0.2rem; }
+.header h1 { font-family: Georgia, serif; color: var(--gold-dark); font-size: 1.7rem; }
+.header p { color: #777; font-size: 0.85rem; margin-top: 0.2rem; }
 
 .btn-admin-trigger {
-    position: fixed; bottom: 15px; left: 15px;
+    position: fixed; bottom: 10px; left: 10px;
     background: var(--white); border: 1px solid var(--gold);
-    color: var(--gold-dark); padding: 0.4rem 0.8rem; border-radius: 20px;
+    color: var(--gold-dark); padding: 0.4rem 0.7rem; border-radius: 20px;
     cursor: pointer; box-shadow: var(--shadow); z-index: 100; font-size: 0.75rem;
 }
 
 .main-container {
-    width: 100%; max-width: 950px; display: flex; flex-direction: column; gap: 1.5rem;
+    width: 100%; max-width: 950px; display: flex; flex-direction: column; gap: 1rem;
 }
 
 .card {
-    background: var(--white); padding: 1.5rem;
+    background: var(--white); padding: 1rem;
     border-radius: var(--radius); box-shadow: var(--shadow);
     border: 1px solid var(--gold-light);
 }
@@ -50,7 +51,7 @@ body {
 
 .search-box { position: relative; margin-top: 0.5rem; }
 .search-box input {
-    width: 100%; padding: 0.75rem 1rem; font-size: 1rem;
+    width: 100%; padding: 0.7rem 1rem; font-size: 0.95rem;
     border: 2px solid var(--gold-light); border-radius: 8px;
     outline: none; background: var(--creme);
 }
@@ -60,17 +61,17 @@ body {
     position: absolute; top: 105%; left: 0; right: 0;
     background: var(--white); border: 1px solid var(--gold-light);
     border-radius: 8px; box-shadow: var(--shadow);
-    max-height: 200px; overflow-y: auto; z-index: 20;
+    max-height: 180px; overflow-y: auto; z-index: 20;
 }
 .result-item { padding: 0.6rem 1rem; cursor: pointer; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; }
 .result-item:hover { background: var(--gold-light); }
 
-/* Exakter Saalplan Rahmen genau wie auf deiner Wunschvorlage */
-.map-card { padding: 1.5rem; background: var(--creme); }
-.map-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;}
+/* Saalplan Container – Smartphone-optimiert durch automatische Skalierung */
+.map-card { padding: 1rem; background: var(--creme); }
+.map-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;}
 
 .map-viewport {
-    width: 100%; height: 720px; overflow: auto; position: relative;
+    width: 100%; height: 550px; overflow: auto; position: relative;
     border-radius: var(--radius); background: var(--white); border: 1px solid var(--gold-light);
     box-shadow: inset 0 2px 8px rgba(0,0,0,0.03);
 }
@@ -85,48 +86,57 @@ body {
     position: absolute; background: var(--white);
     border: 1px solid var(--gold-light); color: var(--gold-dark);
     display: flex; align-items: center; justify-content: center;
-    font-weight: bold; font-size: 0.75rem; border-radius: 8px; box-shadow: var(--shadow);
+    font-weight: bold; font-size: 0.7rem; border-radius: 6px; box-shadow: var(--shadow);
 }
 
 .buffet-zone {
-    width: 110px !important; height: 50px !important; font-size: 0.75rem;
+    width: 100px !important; height: 45px !important; font-size: 0.7rem;
 }
 
-/* Tische exakt im Stil deiner Vorlage mit Sitzplätzen untereinander */
+/* Tisch-Struktur mit echten Spalten (Nummer links, Name rechts) */
 .table-marker {
     position: absolute; transform: translate(-50%, -50%);
     background: var(--white); border: 1px solid var(--gold-light);
-    border-radius: 8px; width: 120px; min-height: 80px;
+    border-radius: 8px; width: 130px; min-height: 75px;
     display: flex; flex-direction: column; align-items: stretch;
     box-shadow: 0 3px 10px rgba(0,0,0,0.04); transition: all 0.3s ease;
-    padding: 6px; text-align: left;
+    padding: 5px; text-align: left;
 }
 
 .table-header {
     display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 1px solid var(--gold-light); padding-bottom: 3px; margin-bottom: 4px;
-    font-size: 0.75rem; font-weight: bold; color: var(--gold-dark);
+    border-bottom: 1px solid var(--gold-light); padding-bottom: 2px; margin-bottom: 3px;
+    font-size: 0.7rem; font-weight: bold; color: var(--gold-dark);
 }
 
 .table-guests-list {
     display: flex; flex-direction: column; gap: 2px;
-    max-height: 120px; overflow-y: auto;
+    max-height: 110px; overflow-y: auto;
 }
 
+/* Spalten-Layout pro Gastzeile */
 .guest-row {
-    display: flex; justify-content: space-between; font-size: 0.65rem; color: #444;
-    padding: 1px 3px; border-radius: 3px;
+    display: grid; grid-template-columns: 24px 1fr; align-items: center;
+    font-size: 0.6rem; color: #444; padding: 1px 2px; border-radius: 3px;
 }
 .guest-row:hover { background: var(--creme); }
-.guest-seat { color: #888; font-weight: bold; margin-right: 4px; }
-.guest-name { flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-/* Brauttisch im Vorlagen-Stil */
+.guest-seat {
+    background: var(--gold-light); color: var(--gold-dark);
+    text-align: center; font-weight: bold; border-radius: 3px;
+    font-size: 0.55rem; padding: 1px 0; margin-right: 3px;
+}
+
+.guest-name {
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500;
+}
+
+/* Brauttisch im Spalten-Grid */
 .table-marker.braut {
-    width: 320px; min-height: 60px; background: var(--white); border: 2px solid var(--gold);
+    width: 300px; min-height: 55px; background: var(--white); border: 2px solid var(--gold);
 }
 .braut-guests-grid {
-    display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; font-size: 0.65rem;
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px;
 }
 
 /* Highlight beim Suchen */
@@ -142,17 +152,17 @@ body {
 }
 
 .speech-banner {
-    margin-top: 1rem; background: var(--gold-light); padding: 0.75rem;
-    border-radius: 8px; text-align: center; color: var(--gold-dark); font-weight: bold; font-size: 0.9rem;
+    margin-top: 0.75rem; background: var(--gold-light); padding: 0.6rem;
+    border-radius: 8px; text-align: center; color: var(--gold-dark); font-weight: bold; font-size: 0.85rem;
 }
 
-.btn-gold { background: var(--gold); color: var(--white); border: none; padding: 0.75rem 1.2rem; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; text-align: center; }
-.btn-creme { background: var(--gold-light); color: var(--gold-dark); border: none; padding: 0.75rem 1.2rem; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; text-align: center; }
-.btn-secondary { background: #e0e0e0; color: #333; border: none; padding: 0.4rem 0.8rem; border-radius: 8px; cursor: pointer; font-size: 0.8rem; }
+.btn-gold { background: var(--gold); color: var(--white); border: none; padding: 0.65rem 1rem; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; text-align: center; font-size: 0.9rem; }
+.btn-creme { background: var(--gold-light); color: var(--gold-dark); border: none; padding: 0.65rem 1rem; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; text-align: center; font-size: 0.9rem; }
+.btn-secondary { background: #e0e0e0; color: #333; border: none; padding: 0.35rem 0.7rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem; }
 
-@media print {
-    body * { visibility: hidden; }
-    .map-card, .map-card * { visibility: visible; }
-    .map-card { position: absolute; left: 0; top: 0; width: 100%; border: none; box-shadow: none; }
-    #reset-map-btn { display: none !important; }
+/* Media Query für echte Smartphones: Passt die Ansicht automatisch an kleine Bildschirme an */
+@media screen and (max-width: 768px) {
+    .map-viewport {
+        height: 420px;
+    }
 }
