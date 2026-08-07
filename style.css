@@ -4,9 +4,9 @@
     --gold-dark: #A38018;
     --creme: #FAF7F2;
     --white: #FFFFFF;
-    --text-color: #2C2C2C;
+    --dark: #2A2A2A;
     --shadow: 0 8px 25px rgba(0,0,0,0.08);
-    --border-radius: 14px;
+    --radius: 14px;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -14,14 +14,13 @@
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background-color: var(--creme);
-    color: var(--text-color);
+    color: var(--dark);
     display: flex; flex-direction: column; align-items: center;
     min-height: 100vh; padding: 1rem;
 }
 
 #confetti-canvas {
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    pointer-events: none; z-index: 999;
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 999;
 }
 
 .header {
@@ -30,13 +29,21 @@ body {
 .header h1 { font-family: Georgia, serif; color: var(--gold-dark); font-size: 2.2rem; }
 .header p { color: #777; margin-top: 0.4rem; }
 
+/* Admin Trigger Button dezent unten links positionierbar oder im Header */
+.btn-admin-trigger {
+    position: fixed; bottom: 15px; left: 15px;
+    background: var(--white); border: 1px solid var(--gold);
+    color: var(--gold-dark); padding: 0.5rem 0.8rem; border-radius: 20px;
+    cursor: pointer; box-shadow: var(--shadow); z-index: 100; font-size: 0.8rem;
+}
+
 .main-container {
     width: 100%; max-width: 700px; display: flex; flex-direction: column; gap: 1.5rem;
 }
 
 .card {
     background: var(--white); padding: 1.5rem;
-    border-radius: var(--border-radius); box-shadow: var(--shadow);
+    border-radius: var(--radius); box-shadow: var(--shadow);
     border: 1px solid var(--gold-light);
 }
 
@@ -60,84 +67,58 @@ body {
 .result-item { padding: 0.75rem 1rem; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
 .result-item:hover { background: var(--gold-light); }
 
-/* Saalplan Bild-Ansicht mit Zoom */
+/* Vektor-Saalplan Viewport */
 .map-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;}
 .map-viewport {
-    width: 100%; height: 420px;
-    overflow: hidden; position: relative;
-    border-radius: 10px; background: #fff;
-    border: 1px solid var(--gold-light);
+    width: 100%; height: 500px; overflow: hidden; position: relative;
+    border-radius: 10px; background: var(--creme); border: 1px solid var(--gold-light);
 }
 
 .map-container {
-    position: relative;
-    width: 100%;
-    transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+    position: relative; width: 100%; height: 600px;
+    transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1);
     transform-origin: 0 0;
 }
 
-.map-container img { width: 100%; display: block; }
-.tables-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-
-.table-marker-dot {
-    position: absolute;
-    transform: translate(-50%, -50%);
-    background: rgba(212, 175, 55, 0.6);
-    border: 2px solid var(--white);
-    border-radius: 50%;
-    width: 35px; height: 35px;
-    display: none;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+.room-zone {
+    position: absolute; background: rgba(244, 232, 193, 0.5);
+    border: 1px dashed var(--gold-dark); color: var(--gold-dark);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold; font-size: 0.75rem; border-radius: 6px;
 }
 
-.table-marker-dot.highlight {
-    display: block;
-    z-index: 30;
-    animation: goldPulse 1.5s infinite alternate;
+.table-marker {
+    position: absolute; transform: translate(-50%, -50%);
+    background: var(--white); border: 2px solid var(--gold);
+    border-radius: 8px; width: 75px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold; color: var(--gold-dark); font-size: 0.8rem;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.05); transition: all 0.3s ease;
+}
+
+/* 5 Sekunden Blinken / Pulsieren */
+.table-marker.highlight {
+    background: var(--gold); color: var(--white); border-color: var(--white);
+    z-index: 50; animation: goldPulse 1s infinite alternate;
 }
 
 @keyframes goldPulse {
-    0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.8); }
-    100% { transform: translate(-50%, -50%) scale(1.4); box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
+    0% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.9); }
+    100% { transform: translate(-50%, -50%) scale(1.2); box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
+}
+
+.speech-banner {
+    margin-top: 1rem; background: var(--gold-light); padding: 0.75rem;
+    border-radius: 8px; text-align: center; color: var(--gold-dark); font-weight: bold;
 }
 
 /* Buttons & Modals */
-.btn-gold {
-    background: var(--gold); color: var(--white); border: none; padding: 0.6rem 1rem; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%;
-}
-.btn-creme {
-    background: var(--gold-light); color: var(--gold-dark);
-    border: none; padding: 0.75rem 1.2rem; border-radius: 8px;
-    font-weight: bold; cursor: pointer; width: 100%; text-align: left; margin-bottom: 0.5rem;
-}
-.btn-secondary {
-    background: #e0e0e0; color: #333; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; width: 100%;
-}
-.modal {
-    border: none; border-radius: var(--border-radius);
-    padding: 1.5rem; max-width: 400px; width: 90%;
-    margin: auto; box-shadow: var(--shadow);
-}
+.btn-gold { background: var(--gold); color: var(--white); border: none; padding: 0.75rem 1.2rem; border-radius: 8px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; }
+.btn-creme { background: var(--gold-light); color: var(--gold-dark); border: none; padding: 0.75rem 1.2rem; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; text-align: center; }
+.btn-secondary { background: #e0e0e0; color: #333; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; }
+.action-footer { display: flex; gap: 0.75rem; justify-content: space-between; }
+
+.modal { border: none; border-radius: var(--radius); padding: 1.5rem; max-width: 400px; width: 90%; margin: auto; box-shadow: var(--shadow); }
 .modal::backdrop { background: rgba(0,0,0,0.5); }
 .modal-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem; }
 .modal-list { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1rem; }
-
-/* Desktop-Only Steuerung für Admin-Button */
-.desktop-only { display: none; }
-@media (min-width: 1024px) {
-    .desktop-only {
-        display: block;
-        position: absolute; right: 0; top: 0;
-        background: transparent; border: 1px solid var(--gold);
-        color: var(--gold-dark); padding: 0.5rem 0.8rem; border-radius: 8px; cursor: pointer;
-        font-weight: bold;
-    }
-}
-
-.expiry-message {
-    text-align: center; background: var(--white);
-    padding: 3rem 2rem; border-radius: var(--border-radius);
-    box-shadow: var(--shadow); margin-top: 20vh;
-    border: 2px solid var(--gold);
-}
-.expiry-message h1 { color: var(--gold-dark); margin-bottom: 1rem; }
