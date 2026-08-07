@@ -16,12 +16,14 @@ class WeddingApp {
         
         initSearch(this.data.guests, (guest) => this.onGuestSelected(guest));
         initAdmin();
+
+        // Button für Gesamtkarte verknüpfen
+        document.getElementById('reset-map-btn').addEventListener('click', () => this.resetMapZoom());
     }
 
     checkExpiration() {
         const now = new Date();
         const expiryDate = new Date(this.config.expirationDate);
-        
         if (now > expiryDate) {
             document.getElementById('app-content').classList.add('hidden');
             document.getElementById('expiry-screen').classList.remove('hidden');
@@ -77,7 +79,6 @@ class WeddingApp {
 
             const container = document.getElementById('map-container');
             const scale = 2.2; 
-            
             const translateX = -(table.x * scale) + 50; 
             const translateY = -(table.y * scale) + 50;
             
@@ -90,6 +91,14 @@ class WeddingApp {
                 colors: ['#D4AF37', '#F4E8C1', '#FFFFFF']
             });
         }
+    }
+
+    resetMapZoom() {
+        // Zoom zurücksetzen, damit der gesamte Saalplan wieder normal zu sehen ist
+        const container = document.getElementById('map-container');
+        container.style.transform = 'translate(0%, 0%) scale(1)';
+        document.querySelectorAll('.table-marker-dot').forEach(m => m.classList.remove('highlight'));
+        document.getElementById('target-guest-info').innerText = "Gesamter Saalplan";
     }
 }
 
