@@ -1,6 +1,5 @@
 import { CONFIG } from '../config.js';
 import { SearchModule } from './search.js';
-import { GuestbookModule } from './guestbook.js';
 import { AdminModule } from './admin.js';
 import { triggerConfetti } from './animation.js';
 import { getRandomSpeech } from './speech.js';
@@ -16,24 +15,21 @@ class WeddingApp {
         await this.loadData();
         
         new SearchModule(this.data.guests, (guest) => this.onGuestSelected(guest));
-        new GuestbookModule();
         new AdminModule(this.data, (newData) => {
             this.data = newData;
             this.renderMapMarkers();
         });
 
-        // Event-Listener für Buttons
         document.getElementById('reset-map-btn').addEventListener('click', () => this.resetMap());
         document.getElementById('show-map-btn').addEventListener('click', () => this.showFullMap());
         document.getElementById('pdf-download-btn').addEventListener('click', () => {
-            window.print(); // Öffnet den Druck-/PDF-Speichern-Dialog
+            window.print();
         });
     }
 
     applyConfig() {
         document.getElementById('app-title').innerText = `${this.config.names.bride} & ${this.config.names.groom}`;
         document.getElementById('app-subtitle').innerText = this.config.subtitle;
-        document.getElementById('photo-link').href = this.config.photoAlbumUrl;
     }
 
     async loadData() {
@@ -52,7 +48,7 @@ class WeddingApp {
         
         this.data.tables.forEach(table => {
             const marker = document.createElement('div');
-            marker.className = 'table-marker';
+            marker.className = table.id === 't-braut' ? 'table-marker braut' : 'table-marker';
             marker.id = `marker-${table.id}`;
             marker.style.left = `${table.x}%`;
             marker.style.top = `${table.y}%`;
@@ -67,7 +63,6 @@ class WeddingApp {
         const table = this.data.tables.find(t => t.id === guest.tableId);
         document.getElementById('target-guest-info').innerText = `${guest.name} ➔ ${table ? table.name : 'Tisch'}, Sitzplatz ${guest.seat}`;
         
-        // Spruch anzeigen
         const speechBanner = document.getElementById('speech-banner');
         document.getElementById('speech-text').innerText = getRandomSpeech();
         speechBanner.classList.remove('hidden');
@@ -79,14 +74,12 @@ class WeddingApp {
             if (targetMarker) {
                 targetMarker.classList.add('highlight');
                 
-                // Nach exakt 5 Sekunden das Blinken stoppen
                 setTimeout(() => {
                     targetMarker.classList.remove('highlight');
                 }, 5000);
 
-                // Weicher Zoom zum Tisch
                 const container = document.getElementById('map-container');
-                const scale = 2.2;
+                const scale = 2.0;
                 const tx = -(table.x * scale) + 50;
                 const ty = -(table.y * scale) + 50;
                 container.style.transform = `translate(${tx}%, ${ty}%) scale(${scale})`;
