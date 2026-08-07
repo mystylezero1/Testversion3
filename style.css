@@ -77,6 +77,36 @@ body {
 .result-item { padding: 0.75rem 1rem; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
 .result-item:hover { background: var(--gold-light); }
 
+/* Saalplan Viewport */
+.map-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;}
+.map-viewport {
+    width: 100%; height: 380px; overflow: hidden; position: relative;
+    border-radius: 10px; background: #eee; border: 1px solid var(--gold-light);
+}
+.map-container { position: relative; width: 100%; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
+.map-container img { width: 100%; display: block; }
+.tables-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+/* Buttons & Modals */
+.btn-creme {
+    background: var(--gold-light); color: var(--gold-dark);
+    border: none; padding: 0.75rem 1.2rem;
+    border-radius: 8px; font-weight: bold; cursor: pointer;
+    width: 100%; text-align: left; margin-bottom: 0.5rem;
+}
+.btn-secondary {
+    background: #e0e0e0; color: #333;
+    border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer;
+}
+.modal {
+    border: none; border-radius: var(--border-radius);
+    padding: 1.5rem; max-width: 400px; width: 90%;
+    margin: auto; box-shadow: var(--shadow);
+}
+.modal::backdrop { background: rgba(0,0,0,0.5); }
+.modal-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem; }
+.modal-list { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1rem; }
+
 /* Desktop-Only Steuerung für Admin-Button */
 .desktop-only { display: none; }
 @media (min-width: 1024px) {
@@ -86,3 +116,12 @@ body {
         color: var(--gold-dark); padding: 0.5rem; border-radius: 8px; cursor: pointer;
     }
 }
+
+/* Expiry Screen */
+.expiry-message {
+    text-align: center; background: var(--white);
+    padding: 3rem 2rem; border-radius: var(--border-radius);
+    box-shadow: var(--shadow); margin-top: 20vh;
+    border: 2px solid var(--gold);
+}
+.expiry-message h1 { color: var(--gold-dark); margin-bottom: 1rem; }
