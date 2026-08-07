@@ -4,88 +4,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hochzeit Anja & Dino</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        /* Hier liegt jetzt das gesamte CSS, damit es garantiert geladen wird */
+        :root { --gold: #D4AF37; --gold-light: #F4E8C1; --gold-dark: #A38018; --creme: #FAF7F2; --white: #FFFFFF; --dark: #2A2A2A; --shadow: 0 4px 15px rgba(0,0,0,0.06); --radius: 12px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: sans-serif; background-color: var(--creme); color: var(--dark); display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 0.5rem; }
+        .header { text-align: center; margin: 1rem; width: 100%; max-width: 900px; }
+        .header h1 { font-family: Georgia, serif; color: var(--gold-dark); font-size: 1.7rem; }
+        .card { background: var(--white); padding: 1rem; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--gold-light); width: 100%; max-width: 950px; margin-bottom: 1rem; }
+        .hidden { display: none !important; }
+        .map-viewport { width: 100%; height: 500px; overflow: auto; position: relative; border-radius: var(--radius); background: var(--white); border: 1px solid var(--gold-light); }
+        .map-container { position: relative; width: 900px; height: 950px; margin: 0 auto; transition: transform 0.6s ease; }
+        .table-marker { position: absolute; transform: translate(-50%, -50%); background: var(--white); border: 1px solid var(--gold-light); border-radius: 8px; width: 130px; min-height: 75px; display: flex; flex-direction: column; padding: 5px; box-shadow: 0 3px 10px rgba(0,0,0,0.04); }
+        .table-header { border-bottom: 1px solid var(--gold-light); font-size: 0.7rem; font-weight: bold; color: var(--gold-dark); margin-bottom: 3px; }
+        .guest-row { display: grid; grid-template-columns: 24px 1fr; font-size: 0.6rem; color: #444; }
+        .guest-seat { background: var(--gold-light); color: var(--gold-dark); text-align: center; font-weight: bold; margin-right: 3px; }
+        .btn-creme { background: var(--gold-light); border: none; padding: 0.6rem; border-radius: 8px; cursor: pointer; }
+    </style>
 </head>
 <body>
-    <canvas id="confetti-canvas"></canvas>
-
     <header class="header">
-        <h1 id="app-title">Anja & Dino</h1>
-        <p id="app-subtitle">Finde deinen Sitzplatz</p>
-        <button id="admin-trigger-btn" class="btn-admin-trigger" title="Admin Konsole">🔒 Admin</button>
+        <h1>Anja & Dino</h1>
+        <p>Finde deinen Platz im Saal</p>
     </header>
 
-    <main class="main-container">
-        <!-- Willkommensseite / Suche -->
-        <section id="search-section" class="card">
+    <main id="main" style="width: 100%; max-width: 950px;">
+        <section class="card">
             <h2>Gast finden</h2>
-            <div class="search-box">
-                <input type="text" id="search-input" placeholder="Name eingeben (z.B. Max)..." autocomplete="off">
-                <div id="search-results" class="results-dropdown"></div>
-            </div>
-            <div class="welcome-actions" style="margin-top: 1rem;">
-                <button id="pdf-download-btn" class="btn-creme">📥 Saalplan als PDF drucken / speichern</button>
-            </div>
+            <input type="text" id="search-input" placeholder="Name eingeben..." style="width:100%; padding:0.5rem; margin-top:0.5rem;">
         </section>
 
-        <!-- Saalplan Ansicht -->
-        <section id="map-section" class="card map-card hidden">
-            <div class="map-header">
-                <h3 id="target-guest-info">Saalplan</h3>
-                <button id="reset-map-btn" class="btn-secondary">🗺️ Gesamtkarte</button>
-            </div>
-            <div id="map-viewport" class="map-viewport">
+        <section class="card map-card">
+            <div class="map-viewport">
                 <div id="map-container" class="map-container">
-                    <div class="room-zone" style="bottom: 10px; left: 10px; width: 100px; height: 40px;">🚪 Eingang</div>
-                    <div class="room-zone" style="bottom: 10px; left: 120px; right: 10px; height: 40px;">🎧 DJ & Tanzfläche</div>
-                    <div class="room-zone buffet-zone" style="top: 35%; right: 10px;">🥂 Ausschank & Buffet</div>
-                    
-                    <div id="tables-layer" class="tables-layer"></div>
+                    <div id="tables-layer"></div>
                 </div>
-            </div>
-            <div id="speech-banner" class="speech-banner hidden">
-                <span id="speech-text"></span>
             </div>
         </section>
     </main>
 
-    <!-- Dialog bei doppelten Namen -->
-    <dialog id="disambiguation-dialog" class="modal">
-        <h3>Mehrere Personen gefunden</h3>
-        <p>Bitte wähle deinen genauen Platz aus:</p>
-        <div id="disambiguation-list" class="modal-list"></div>
-        <div class="modal-actions">
-            <button type="button" id="disambiguation-close-btn" class="btn-secondary">Abbrechen</button>
-        </div>
-    </dialog>
-
-    <!-- Admin Modal -->
-    <dialog id="admin-dialog" class="modal">
-        <h3>🔒 Admin-Konsole</h3>
-        <div id="admin-auth">
-            <input type="password" id="admin-password" placeholder="Passwort" style="width:100%; padding:0.6rem; margin-bottom:1rem; border:1px solid #ccc; border-radius:6px;">
-            <button id="admin-login-btn" class="btn-gold">Einloggen</button>
-        </div>
-        <div id="admin-panel" class="hidden">
-            <div class="admin-tools" style="display:flex; gap:0.5rem; margin-bottom:1rem;">
-                <button id="excel-export-btn" class="btn-creme" style="font-size:0.8rem;">Export</button>
-                <button id="excel-import-btn" class="btn-creme" style="font-size:0.8rem;">Import</button>
-                <input type="file" id="excel-import-file" accept=".xlsx, .xls" class="hidden">
-            </div>
-            <div style="margin-bottom: 1rem; border-top: 1px solid #eee; padding-top: 0.5rem;">
-                <h4>Gast hinzufügen</h4>
-                <input type="text" id="new-guest-name" placeholder="Name" style="width:100%; padding:0.4rem; margin-bottom:0.3rem;">
-                <input type="number" id="new-guest-seat" placeholder="Sitzplatz-Nr" style="width:100%; padding:0.4rem; margin-bottom:0.3rem;">
-                <select id="new-guest-table" style="width:100%; padding:0.4rem; margin-bottom:0.5rem;"></select>
-                <button id="add-guest-btn" class="btn-gold" style="font-size:0.8rem;">Speichern</button>
-            </div>
-            <div id="admin-guest-list" class="admin-list" style="max-height:150px; overflow-y:auto; font-size:0.85rem;"></div>
-            <button id="admin-close-btn" class="btn-secondary" style="margin-top:1rem;">Schließen</button>
-        </div>
-    </dialog>
-
-    <script type="module" src="js/app.js"></script>
+    <script type="module">
+        // Wir laden die Daten direkt, wenn die Seite lädt
+        async function init() {
+            try {
+                const res = await fetch('data.json');
+                const data = await res.json();
+                const layer = document.getElementById('tables-layer');
+                data.tables.forEach(table => {
+                    const marker = document.createElement('div');
+                    marker.className = 'table-marker';
+                    marker.style.left = table.x + '%';
+                    marker.style.top = table.y + '%';
+                    const guests = data.guests.filter(g => g.tableId === table.id);
+                    marker.innerHTML = `<div class="table-header">${table.name}</div>` + 
+                        guests.map(g => `<div class="guest-row"><span class="guest-seat">${g.seat}</span><span>${g.name}</span></div>`).join('');
+                    layer.appendChild(marker);
+                });
+            } catch(e) { console.error("Daten konnten nicht geladen werden", e); }
+        }
+        init();
+    </script>
 </body>
 </html>
