@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hochzeit Anja & Dino - Sitzplan</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gold: {
+              50: '#fffdf5',
+              100: '#fff9e6',
+              200: '#fff0bd',
+              300: '#ffe28a',
+              400: '#ffd04d',
+              500: '#f5b81a',
+              600: '#d9970d',
+              700: '#b37109',
+              800: '#91580f',
+              900: '#774711',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            serif: ['Playfair Display', 'Georgia', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- SheetJS for Excel Import/Export -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <style>
+    body {
+      background-color: #fdfbf7;
+      color: #332f2b;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .font-serif-title {
+      font-family: 'Playfair Display', Georgia, serif;
+    }
+
+    /* Hide seat badge tags on smaller screens (smartphones) */
+    @media (max-width: 768px) {
+      .seat-tag {
+        display: none !important;
+      }
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1ede4;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #d4af37;
+      border-radius: 3px;
+    }
+
+    /* Sparkle Particle Canvas */
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col relative pb-12">
+  <!-- Canvas for Sparkles/Confetti -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Navigation / Header Bar -->
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-gold-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-full bg-amber-100 border border-gold-300 flex items-center justify-between px-2 text-gold-700">
+          <i class="fa-solid fa-ring text-lg"></i>
+          <i class="fa-solid fa-heart text-xs text-rose-500"></i>
+        </div>
+        <div>
+          <h1 class="font-serif-title text-lg md:text-xl font-bold text-gray-900 tracking-wide">Anja & Dino</h1>
+          <p class="text-xs text-gold-700 font-medium">Hochzeit • Sitzplan & Tischordnung</p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <!-- Quick View Toggle -->
+        <button onclick="scrollToOverview()" class="px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-50 text-gold-800 border border-gold-300 hover:bg-gold-100 transition flex items-center space-x-1 shadow-sm">
+          <i class="fa-solid fa-map"></i>
+          <span class="hidden sm:inline">Gesamtübersicht</span>
+        </button>
+
+        <!-- Admin Button (Hidden on Mobile via CSS) -->
+        <button id="admin-login-btn" onclick="openAdminModal()" class="hidden md:flex items-center space-x-1 px-3 py-1.5 rounded-full text-xs font-semibold bg-gray-900 text-gold-300 hover:bg-gray-800 transition shadow-sm border border-gold-400">
+          <i class="fa-solid fa-lock text-gold-400"></i>
+          <span>Admin-Konsole</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Search & Welcome Banner -->
+  <section class="max-w-4xl mx-auto px-4 pt-6 pb-4 w-full">
+    <div class="glass-card rounded-2xl p-5 md:p-8 text-center shadow-md relative overflow-hidden">
+      <div class="absolute -right-6 -top-6 w-24 h-24 bg-gold-200/40 rounded-full blur-2xl"></div>
+      
+      <span class="inline-block px-3 py-1 rounded-full bg-gold-100 text-gold-800 text-xs font-medium mb-2">
+        <i class="fa-solid fa-sparkles mr-1"></i> Suchen Sie Ihren Sitzplatz
+      </span>
+      
+      <h2 class="font-serif-title text-2xl md:text-3xl font-bold text-gray-800 mb-2">Willkommen zu unserer Feier!</h2>
+      <p class="text-sm text-gray-600 max-w-md mx-auto mb-6">Geben Sie Ihren Namen ein, um Ihren zugewiesenen Tisch und Platz auf dem Grundriss zu finden.</p>
+
+      <!-- Live Search Box -->
+      <div class="relative max-w-lg mx-auto">
+        <div class="relative flex items-center">
+          <i class="fa-solid fa-magnifying-glass absolute left-4 text-gold-500 text-lg"></i>
+          <input type="text" id="guest-search-input" oninput="handleSearchInput(this.value)" placeholder="Vor- oder Nachname eingeben..." class="w-full pl-12 pr-10 py-3.5 rounded-xl border-2 border-gold-300 focus:border-gold-500 focus:ring-2 focus:ring-gold-200 text-base shadow-sm outline-none transition bg-white">
+          <button id="clear-search-btn" onclick="clearSearch()" class="hidden absolute right-3 text-gray-400 hover:text-gray-600 p-1">
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+
+        <!-- Search Results Dropdown -->
+        <div id="search-results-dropdown" class="hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-xl shadow-xl border border-gold-200 z-50 max-h-60 overflow-y-auto text-left divide-y divide-gray-100">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Found Guest Info Card Banner (Appears when guest selected) -->
+  <section id="found-guest-card" class="hidden max-w-4xl mx-auto px-4 mb-4">
+    <div class="bg-gradient-to-r from-amber-500 via-gold-500 to-amber-600 rounded-2xl p-4 text-white shadow-lg flex items-center justify-between transition-all transform animate-bounce-short">
+      <div class="flex items-center space-x-3">
+        <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-2xl">
+          <i class="fa-solid fa-chair"></i>
+        </div>
+        <div>
+          <h3 id="found-guest-name" class="font-bold text-lg"></h3>
+          <p id="found-guest-table" class="text-xs text-amber-100 font-medium"></p>
+        </div>
+      </div>
+      <button onclick="clearSearch()" class="bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">
+        Suche zurücksetzen
+      </button>
+    </div>
+  </section>
+
+  <!-- Hall Floorplan Canvas / Grid Layout -->
+  <main id="overview-section" class="max-w-7xl mx-auto px-2 md:px-6 py-4 flex-1 w-full">
+    <div class="bg-amber-50/50 rounded-3xl p-3 md:p-6 border border-gold-200/80 shadow-sm relative">
+      
+      <div class="text-center mb-6">
+        <h3 class="font-serif-title text-xl font-bold text-gray-800">Saalplan & Tischverteilung</h3>
+        <p class="text-xs text-gray-500">Tische & Plätze im Raum</p>
+      </div>
+
+      <!-- 1. TOP: BRAUTTISCH (Tables 1 & 2 combined or Top Center) -->
+      <div class="mb-8 flex justify-center">
+        <div id="table-card-1" class="w-full max-w-3xl glass-card rounded-2xl p-4 border-2 border-gold-400 shadow-md transition-all hover:shadow-lg">
+          <div class="text-center pb-3 border-b border-gold-200 mb-3 flex items-center justify-center space-x-2">
+            <i class="fa-solid fa-crown text-gold-500 text-lg"></i>
+            <h4 class="font-serif-title text-lg font-bold text-amber-900">Brauttisch</h4>
+            <i class="fa-solid fa-crown text-gold-500 text-lg"></i>
+          </div>
+
+          <!-- Top Row (1-8) & Bottom Row (9-14) -->
+          <div class="space-y-3">
+            <div class="text-xs text-center text-gold-800 font-semibold uppercase tracking-wider mb-1">Obere Reihe</div>
+            <div id="table-1-top-seats" class="grid grid-cols-4 sm:grid-cols-7 gap-1.5"></div>
+
+            <div class="text-xs text-center text-gold-800 font-semibold uppercase tracking-wider mt-3 mb-1">Untere Reihe</div>
+            <div id="table-1-bottom-seats" class="grid grid-cols-3 sm:grid-cols-6 gap-1.5 justify-center"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. MIDDLE GRID: TABLES 3 TO 20 -->
+      <!-- Row 1: Tables 3, 4, 5, 6, 7 -->
+      <div class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Reihe 1</div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4 mb-6">
+        <div id="table-card-3" class="table-container"></div>
+        <div id="table-card-4" class="table-container"></div>
+        <div id="table-card-5" class="table-container"></div>
+        <div id="table-card-6" class="table-container"></div>
+        <div id="table-card-7" class="table-container"></div>
+      </div>
+
+      <!-- Row 2: Tables 8, 9, 10, 11, 12 + Buffet Arrow Right -->
+      <div class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Reihe 2</div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4 mb-6 items-stretch">
+        <div id="table-card-8" class="table-container"></div>
+        <div id="table-card-9" class="table-container"></div>
+        <div id="table-card-10" class="table-container"></div>
+        <div id="table-card-11" class="table-container"></div>
+        <div id="table-card-12" class="table-container"></div>
+
+        <!-- Buffet / Bar Box -->
+        <div class="bg-gradient-to-br from-amber-100 to-amber-200 border-2 border-gold-400 rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-sm h-full min-h-[220px]">
+          <div class="w-12 h-12 rounded-full bg-white text-gold-700 flex items-center justify-center text-2xl mb-2 shadow-sm">
+            <i class="fa-solid fa-wine-glass"></i>
+          </div>
+          <i class="fa-solid fa-arrow-right text-gold-600 text-xl mb-1 animate-pulse"></i>
+          <h5 class="font-serif-title font-bold text-amber-900 text-base">Ausschank & Buffet</h5>
+          <p class="text-[11px] text-amber-800 mt-1">Getränke & Speisen</p>
+        </div>
+      </div>
+
+      <!-- Row 3: Tables 13, 14, 15, 16 -->
+      <div class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Reihe 3</div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
+        <div id="table-card-13" class="table-container"></div>
+        <div id="table-card-14" class="table-container"></div>
+        <div id="table-card-15" class="table-container"></div>
+        <div id="table-card-16" class="table-container"></div>
+      </div>
+
+      <!-- Row 4: Tables 17, 18, 19, 20 -->
+      <div class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">Reihe 4</div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-8">
+        <div id="table-card-17" class="table-container"></div>
+        <div id="table-card-18" class="table-container"></div>
+        <div id="table-card-19" class="table-container"></div>
+        <div id="table-card-20" class="table-container"></div>
+      </div>
+
+      <!-- 3. BOTTOM SECTION: ENTRANCE DOOR & DJ / DANCEFLOOR -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center pt-4 border-t border-gold-200">
+        <!-- Door Entrance -->
+        <div class="bg-white border-2 border-gray-300 rounded-2xl p-4 flex items-center justify-center space-x-3 text-gray-700 shadow-sm">
+          <i class="fa-solid fa-door-open text-2xl text-amber-600"></i>
+          <span class="font-bold text-sm">Eingangs-Tür</span>
+        </div>
+
+        <!-- DJ & Dancefloor -->
+        <div class="md:col-span-3 bg-gradient-to-r from-gray-900 via-amber-950 to-gray-900 text-white border-2 border-gold-500 rounded-2xl p-5 flex items-center justify-center space-x-4 shadow-md">
+          <i class="fa-solid fa-compact-disc text-3xl text-gold-400 animate-spin" style="animation-duration: 8s;"></i>
+          <div class="text-center">
+            <h4 class="font-serif-title font-bold text-lg text-gold-300">DJ & Tanzfläche</h4>
+            <p class="text-xs text-gray-300">Musik & Partystimmung</p>
+          </div>
+          <i class="fa-solid fa-music text-2xl text-gold-400"></i>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Duplicate Name Choice Modal -->
+  <div id="disambiguation-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-gold-300 relative animate-scale-up">
+      <button onclick="closeDisambiguationModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+        <i class="fa-solid fa-xmark text-xl"></i>
+      </button>
+
+      <div class="text-center mb-4">
+        <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 text-xl mx-auto mb-2">
+          <i class="fa-solid fa-users"></i>
+        </div>
+        <h3 class="font-serif-title text-xl font-bold text-gray-800">Mehrere Personen gefunden</h3>
+        <p class="text-xs text-gray-500">Bitte wählen Sie Ihren genauen Eintrag aus:</p>
+      </div>
+
+      <div id="disambiguation-list" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
+    </div>
+  </div>
+
+  <!-- Password Admin Login Modal -->
+  <div id="admin-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-gold-300 relative">
+      <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+        <i class="fa-solid fa-xmark text-xl"></i>
+      </button>
+
+      <div class="text-center mb-4">
+        <div class="w-12 h-12 bg-gray-900 rounded-full flex items-center justify-center text-gold-400 text-xl mx-auto mb-2">
+          <i class="fa-solid fa-user-shield"></i>
+        </div>
+        <h3 class="font-serif-title text-lg font-bold text-gray-900">Admin-Konsole Login</h3>
+        <p class="text-xs text-gray-500">Zugang nur für Brautpaar & Planer auf Desktop</p>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-gray-700 mb-1">Passwort</label>
+          <input type="password" id="admin-password-input" placeholder="Passwort eingeben..." class="w-full p-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-gold-400 outline-none">
+        </div>
+        <button onclick="verifyAdminPassword()" class="w-full bg-gray-900 text-gold-300 py-3 rounded-xl font-bold text-sm hover:bg-gray-800 transition">
+          Anmelden
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Full Admin Console Drawer / Modal (Desktop view) -->
+  <div id="admin-dashboard-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-md z-50 overflow-y-auto p-4 md:p-8">
+    <div class="max-w-6xl mx-auto bg-white rounded-3xl p-6 md:p-8 shadow-2xl border border-gold-300">
+      <div class="flex items-center justify-between pb-4 border-b border-gray-200 mb-6">
+        <div>
+          <h2 class="font-serif-title text-2xl font-bold text-gray-900">Sitzplatz & Tisch Admin-Verwaltung</h2>
+          <p class="text-xs text-gray-500">Gäste verwalten, Kinder markieren, Excel-Import/Export</p>
+        </div>
+        <div class="flex items-center space-x-3">
+          <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl text-xs font-semibold flex items-center space-x-1">
+            <i class="fa-solid fa-file-excel"></i>
+            <span>Excel Export</span>
+          </button>
+
+          <label class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer flex items-center space-x-1">
+            <i class="fa-solid fa-file-import"></i>
+            <span>Excel Import</span>
+            <input type="file" id="excel-file-input" accept=".xlsx, .xls, .csv" onchange="importFromExcel(event)" class="hidden">
+          </label>
+
+          <button onclick="closeAdminDashboard()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 p-2 rounded-xl text-xs">
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Admin Content Layout -->
+      <div id="admin-tables-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-h-[70vh] overflow-y-auto p-2">
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-12 text-center text-xs text-gray-400 py-4 border-t border-gold-100">
+    <p>Hochzeits-App • Anja & Dino • Sitzplan</p>
+  </footer>
+
+  <script>
+    // Global Configuration & Admin Credentials
+    const ADMIN_PASSWORD = "wedding2026";
+    let isAdminLoggedIn = false;
+
+    // Default Guest List Data based on provided Excel list
+    let guestList = [
+      { id: 1, name: "Anne", table: 1, seat: 1, isChild: false },
+      { id: 2, name: "Felix", table: 1, seat: 2, isChild: false },
+      { id: 3, name: "Dino", table: 1, seat: 3, isChild: false },
+      { id: 4, name: "Anja", table: 1, seat: 4, isChild: false },
+      { id: 5, name: "Toni", table: 1, seat: 5, isChild: false },
+      { id: 6, name: "Vito", table: 1, seat: 6, isChild: false },
+      { id: 7, name: "Dani", table: 1, seat: 7, isChild: false },
+      { id: 8, name: "Günther", table: 1, seat: 9, isChild: false },
+      { id: 9, name: "Erika", table: 1, seat: 10, isChild: false },
+      { id: 10, name: "Brigitte", table: 1, seat: 11, isChild: false },
+      { id: 11, name: "Peter", table: 1, seat: 12, isChild: false },
+      { id: 12, name: "Ingrid", table: 1, seat: 13, isChild: false },
+      { id: 13, name: "Roswitha", table: 1, seat: 14, isChild: false },
+
+      { id: 14, name: "Heike", table: 3, seat: 15, isChild: false },
+      { id: 15, name: "Michael", table: 3, seat: 16, isChild: false },
+      { id: 16, name: "Flo", table: 3, seat: 17, isChild: false },
+      { id: 17, name: "Jutta", table: 3, seat: 18, isChild: false },
+      { id: 18, name: "Christian", table: 3, seat: 19, isChild: false },
+      { id: 19, name: "Malika", table: 3, seat: 20, isChild: false },
+
+      { id: 20, name: "Luca", table: 4, seat: 21, isChild: true },
+      { id: 21, name: "Sebastian", table: 4, seat: 22, isChild: false },
+      { id: 22, name: "Melissa", table: 4, seat: 23, isChild: false },
+      { id: 23, name: "Gusti", table: 4, seat: 24, isChild: false },
+      { id: 24, name: "Celina", table: 4, seat: 25, isChild: false },
+      { id: 25, name: "Noah", table: 4, seat: 26, isChild: true },
+
+      { id: 26, name: "Cosetta", table: 5, seat: 27, isChild: false },
+      { id: 27, name: "Beppo", table: 5, seat: 28, isChild: false },
+      { id: 28, name: "Giovanni", table: 5, seat: 29, isChild: false },
+      { id: 29, name: "Laura", table: 5, seat: 30, isChild: false },
+      { id: 30, name: "Patrick", table: 5, seat: 31, isChild: false },
+      { id: 31, name: "Diana", table: 5, seat: 32, isChild: false },
+      { id: 32, name: "Nadja", table: 5, seat: 33, isChild: false },
+
+      { id: 33, name: "Gino", table: 6, seat: 34, isChild: false },
+      { id: 34, name: "Enzo", table: 6, seat: 35, isChild: false },
+      { id: 35, name: "Pauline", table: 6, seat: 36, isChild: false },
+      { id: 36, name: "Luca", table: 6, seat: 37, isChild: true },
+      { id: 37, name: "Timo", table: 6, seat: 38, isChild: false },
+      { id: 38, name: "Julia", table: 6, seat: 39, isChild: false },
+
+      { id: 39, name: "Sven", table: 7, seat: 40, isChild: false },
+      { id: 40, name: "Phil", table: 7, seat: 41, isChild: false },
+      { id: 41, name: "Samuel", table: 7, seat: 42, isChild: false },
+      { id: 42, name: "Lars", table: 7, seat: 43, isChild: false },
+      { id: 43, name: "Melanie", table: 7, seat: 44, isChild: false },
+      { id: 44, name: "Michelle", table: 7, seat: 45, isChild: false },
+
+      { id: 45, name: "Max", table: 8, seat: 46, isChild: false },
+      { id: 46, name: "Caro", table: 8, seat: 47, isChild: false },
+      { id: 47, name: "Flo", table: 8, seat: 48, isChild: false },
+      { id: 48, name: "Manu", table: 8, seat: 49, isChild: false },
+      { id: 49, name: "Axel", table: 8, seat: 50, isChild: false },
+      { id: 50, name: "Manuela", table: 8, seat: 51, isChild: false },
+
+      { id: 51, name: "Laurin", table: 9, seat: 52, isChild: false },
+      { id: 52, name: "Christian", table: 9, seat: 53, isChild: false },
+      { id: 53, name: "Eli", table: 9, seat: 54, isChild: true },
+      { id: 54, name: "Tami", table: 9, seat: 55, isChild: false },
+      { id: 55, name: "Rene", table: 9, seat: 56, isChild: false },
+
+      { id: 56, name: "Jenny", table: 10, seat: 61, isChild: false },
+      { id: 57, name: "Alex", table: 10, seat: 62, isChild: false },
+      { id: 58, name: "Elio", table: 10, seat: 63, isChild: true },
+      { id: 59, name: "Toni", table: 10, seat: 64, isChild: false },
+      { id: 60, name: "Vanessa", table: 10, seat: 65, isChild: false },
+
+      { id: 61, name: "Max", table: 11, seat: 66, isChild: false },
+      { id: 62, name: "Theo", table: 11, seat: 67, isChild: true },
+      { id: 63, name: "Eva", table: 11, seat: 68, isChild: false },
+      { id: 64, name: "Matze", table: 11, seat: 69, isChild: false },
+      { id: 65, name: "Fred", table: 11, seat: 70, isChild: false },
+      { id: 66, name: "Matti", table: 11, seat: 71, isChild: true },
+      { id: 67, name: "Katrin", table: 11, seat: 72, isChild: false },
+      { id: 68, name: "Rob", table: 11, seat: 73, isChild: false },
+      { id: 69, name: "Jule", table: 11, seat: 74, isChild: false },
+      { id: 70, name: "Dominique", table: 11, seat: 75, isChild: false },
+      { id: 71, name: "Christoph", table: 11, seat: 76, isChild: false },
+
+      { id: 72, name: "Fabi", table: 12, seat: 77, isChild: false },
+      { id: 73, name: "Juri", table: 12, seat: 78, isChild: false },
+      { id: 74, name: "Alba", table: 12, seat: 79, isChild: false },
+      { id: 75, name: "Hannah", table: 12, seat: 80, isChild: false },
+      { id: 76, name: "Georg", table: 12, seat: 81, isChild: false },
+
+      { id: 77, name: "Patrick", table: 13, seat: 82, isChild: false },
+      { id: 78, name: "Charlotte", table: 13, seat: 83, isChild: false },
+      { id: 79, name: "Mathilde", table: 13, seat: 84, isChild: false },
+      { id: 80, name: "Tom", table: 13, seat: 85, isChild: false },
+      { id: 81, name: "Frauke", table: 13, seat: 86, isChild: false },
+
+      { id: 82, name: "Mira", table: 14, seat: 93, isChild: false },
+      { id: 83, name: "Fabian", table: 14, seat: 94, isChild: false },
+      { id: 84, name: "Julia", table: 14, seat: 95, isChild: false },
+      { id: 85, name: "Sebastian", table: 14, seat: 96, isChild: false },
+      { id: 86, name: "Matteo", table: 14, seat: 97, isChild: true },
+      { id: 87, name: "Melanie", table: 14, seat: 98, isChild: false },
+
+      { id: 88, name: "Dani", table: 15, seat: 99, isChild: false },
+      { id: 89, name: "Marco", table: 15, seat: 100, isChild: false },
+      { id: 90, name: "Marina", table: 15, seat: 101, isChild: false },
+      { id: 91, name: "Michael", table: 15, seat: 102, isChild: false },
+      { id: 92, name: "Miriam", table: 15, seat: 103, isChild: false },
+      { id: 93, name: "Flo", table: 15, seat: 104, isChild: false },
+      { id: 94, name: "Philipp", table: 15, seat: 105, isChild: false },
+      { id: 95, name: "Marcel", table: 15, seat: 106, isChild: false },
+
+      { id: 96, name: "Nele", table: 16, seat: 107, isChild: false },
+      { id: 97, name: "Elena", table: 16, seat: 108, isChild: false },
+      { id: 98, name: "Sebastian", table: 16, seat: 109, isChild: false },
+      { id: 99, name: "Marie", table: 16, seat: 110, isChild: false },
+      { id: 100, name: "Jo", table: 16, seat: 111, isChild: false },
+      { id: 101, name: "Anton", table: 16, seat: 114, isChild: false },
+      { id: 102, name: "Theo", table: 16, seat: 115, isChild: true },
+
+      { id: 103, name: "Sandra", table: 17, seat: 112, isChild: false },
+      { id: 104, name: "Georg", table: 17, seat: 113, isChild: false },
+      { id: 105, name: "Jonah", table: 17, seat: 118, isChild: false },
+      { id: 106, name: "Lou", table: 17, seat: 119, isChild: false },
+      { id: 107, name: "Ellie", table: 17, seat: 120, isChild: true },
+      { id: 108, name: "Lennart", table: 17, seat: 121, isChild: false },
+      { id: 109, name: "Julia", table: 17, seat: 127, isChild: false },
+
+      { id: 110, name: "Liv", table: 18, seat: 128, isChild: false },
+      { id: 111, name: "Fabi", table: 18, seat: 129, isChild: false },
+      { id: 112, name: "Linus", table: 18, seat: 130, isChild: false },
+      { id: 113, name: "Elias", table: 18, seat: 131, isChild: false },
+      { id: 114, name: "Theo", table: 18, seat: 134, isChild: true },
+      { id: 115, name: "Timo", table: 18, seat: 135, isChild: false },
+
+      { id: 116, name: "Rainer", table: 19, seat: 137, isChild: false },
+      { id: 117, name: "Verena", table: 19, seat: 138, isChild: false },
+      { id: 118, name: "Caro", table: 19, seat: 139, isChild: false },
+      { id: 119, name: "Phillip", table: 19, seat: 140, isChild: false },
+      { id: 120, name: "Alex", table: 19, seat: 141, isChild: false },
+      { id: 121, name: "Matthäus", table: 19, seat: 142, isChild: false },
+      { id: 122, name: "Felix", table: 19, seat: 143, isChild: false },
+
+      { id: 123, name: "Jonas", table: 20, seat: 144, isChild: false },
+      { id: 124, name: "Anton", table: 20, seat: 145, isChild: false },
+      { id: 125, name: "Clara", table: 20, seat: 146, isChild: false },
+      { id: 126, name: "Frauke", table: 20, seat: 147, isChild: false },
+      { id: 127, name: "Stefan", table: 20, seat: 148, isChild: false },
+      { id: 128, name: "Sophia", table: 20, seat: 149, isChild: false },
+      { id: 129, name: "Emil", table: 20, seat: 150, isChild: true },
+      { id: 130, name: "Emma", table: 20, seat: 151, isChild: true },
+      { id: 131, name: "Chrissi", table: 20, seat: 152, isChild: false },
+      { id: 132, name: "David", table: 20, seat: 153, isChild: false }
+    ];
+
+    // Load persisted guest data from localStorage if available
+    function loadGuestData() {
+      const saved = localStorage.getItem('wedding_guests');
+      if (saved) {
+        try {
+          guestList = JSON.parse(saved);
+        } catch (e) {
+          console.error("Failed to parse saved guest data", e);
+        }
+      }
+    }
+
+    function saveGuestData() {
+      localStorage.setItem('wedding_guests', JSON.stringify(guestList));
+    }
+
+    // Render Hall Tables & Guests
+    function renderHallPlan() {
+      // 1. Render Brauttisch (Table 1 & 2)
+      const topSeatsEl = document.getElementById('table-1-top-seats');
+      const bottomSeatsEl = document.getElementById('table-1-bottom-seats');
+      
+      const brautGuests = guestList.filter(g => g.table === 1);
+      
+      const topSeats = brautGuests.filter(g => g.seat <= 8).sort((a,b) => a.seat - b.seat);
+      const bottomSeats = brautGuests.filter(g => g.seat > 8).sort((a,b) => a.seat - b.seat);
+
+      if (topSeatsEl) {
+        topSeatsEl.innerHTML = topSeats.map(g => `
+          <div id="seat-item-${g.id}" class="bg-amber-100/90 border border-gold-300 rounded-lg p-1.5 text-center transition-all hover:bg-gold-200">
+            <span class="seat-tag text-[10px] text-amber-700 font-bold block">#${g.seat}</span>
+            <span class="text-xs font-semibold text-gray-800 truncate block">${g.name} ${g.isChild ? '⭐' : ''}</span>
+          </div>
+        `).join('');
+      }
+
+      if (bottomSeatsEl) {
+        bottomSeatsEl.innerHTML = bottomSeats.map(g => `
+          <div id="seat-item-${g.id}" class="bg-amber-100/90 border border-gold-300 rounded-lg p-1.5 text-center transition-all hover:bg-gold-200">
+            <span class="seat-tag text-[10px] text-amber-700 font-bold block">#${g.seat}</span>
+            <span class="text-xs font-semibold text-gray-800 truncate block">${g.name} ${g.isChild ? '⭐' : ''}</span>
+          </div>
+        `).join('');
+      }
+
+      // 2. Render Tables 3 to 20
+      for (let t = 3; t <= 20; t++) {
+        const tableContainer = document.getElementById(`table-card-${t}`);
+        if (!tableContainer) continue;
+
+        const tableGuests = guestList.filter(g => g.table === t).sort((a,b) => a.seat - b.seat);
+        
+        // Split guests into Left & Right column for realistic seating layout
+        const leftGuests = [];
+        const rightGuests = [];
+        tableGuests.forEach((g, idx) => {
+          if (idx % 2 === 0) leftGuests.push(g);
+          else rightGuests.push(g);
+        });
+
+        tableContainer.innerHTML = `
+          <div class="glass-card rounded-2xl p-3 border border-gold-300 shadow-sm h-full flex flex-col justify-between hover:border-gold-500 transition">
+            <div class="text-center border-b border-gold-200 pb-2 mb-2 flex items-center justify-between px-1">
+              <span class="text-xs font-bold text-gold-700">Tisch ${t}</span>
+              <span class="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-medium">${tableGuests.length} Gäste</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-1.5 flex-1 items-start text-left">
+              <!-- Left Column -->
+              <div class="space-y-1">
+                ${leftGuests.map(g => `
+                  <div id="seat-item-${g.id}" class="bg-white/80 border border-gold-200 rounded-md px-1.5 py-1 flex items-center justify-between text-xs transition">
+                    <span class="font-medium text-gray-800 truncate">${g.name} ${g.isChild ? '⭐' : ''}</span>
+                    <span class="seat-tag text-[9px] text-gold-700 font-bold ml-1">#${g.seat}</span>
+                  </div>
+                `).join('')}
+              </div>
+
+              <!-- Right Column -->
+              <div class="space-y-1">
+                ${rightGuests.map(g => `
+                  <div id="seat-item-${g.id}" class="bg-white/80 border border-gold-200 rounded-md px-1.5 py-1 flex items-center justify-between text-xs transition">
+                    <span class="font-medium text-gray-800 truncate">${g.name} ${g.isChild ? '⭐' : ''}</span>
+                    <span class="seat-tag text-[9px] text-gold-700 font-bold ml-1">#${g.seat}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // Search Functionality
+    function handleSearchInput(query) {
+      const dropdown = document.getElementById('search-results-dropdown');
+      const clearBtn = document.getElementById('clear-search-btn');
+      
+      const clean = query.trim().toLowerCase();
+      if (!clean) {
+        dropdown.classList.add('hidden');
+        clearBtn.classList.add('hidden');
+        return;
+      }
+
+      clearBtn.classList.remove('hidden');
+
+      const matches = guestList.filter(g => g.name.toLowerCase().includes(clean));
+      if (matches.length === 0) {
+        dropdown.innerHTML = `<div class="p-4 text-center text-xs text-gray-500">Kein Gast gefunden</div>`;
+        dropdown.classList.remove('hidden');
+        return;
+      }
+
+      dropdown.innerHTML = matches.map(g => `
+        <button onclick="selectGuestFromModal(${g.id})" class="w-full text-left p-3 hover:bg-gold-50 transition flex items-center justify-between">
+          <div>
+            <span class="font-bold text-gray-800 text-sm block">${g.name} ${g.isChild ? '⭐' : ''}</span>
+            <span class="text-xs text-gold-700">${g.table === 1 ? 'Brauttisch' : 'Tisch ' + g.table}</span>
+          </div>
+          <i class="fa-solid fa-chevron-right text-gold-400 text-xs"></i>
+        </button>
+      `).join('');
+      dropdown.classList.remove('hidden');
+
+      // Check for exact duplicate names to prompt modal
+      const exactMatches = matches.filter(g => g.name.toLowerCase() === clean);
+      if (exactMatches.length > 1) {
+        openDisambiguationModal(exactMatches);
+      }
+    }
+
+    function openDisambiguationModal(matches) {
+      const list = document.getElementById('disambiguation-list');
+      list.innerHTML = matches.map(g => `
+        <button onclick="selectGuestFromModal(${g.id})" class="w-full text-left p-3 rounded-xl border border-gold-200 hover:border-gold-500 hover:bg-gold-50 transition flex items-center justify-between">
+          <div>
+            <span class="font-bold text-gray-800 block">${g.name} ${g.isChild ? '⭐' : ''}</span>
+            <span class="text-xs text-gold-700">${g.table === 1 ? 'Brauttisch' : 'Tisch ' + g.table}</span>
+          </div>
+          <i class="fa-solid fa-arrow-right text-gold-500"></i>
+        </button>
+      `).join('');
+
+      document.getElementById('disambiguation-modal').classList.remove('hidden');
+    }
+
+    function closeDisambiguationModal() {
+      document.getElementById('disambiguation-modal').classList.add('hidden');
+    }
+
+    function selectGuestFromModal(guestId) {
+      closeDisambiguationModal();
+      selectGuestDirectly(guestId);
+    }
+
+    function clearSearch() {
+      const input = document.getElementById('guest-search-input');
+      if (input) input.value = '';
+      document.getElementById('search-results-dropdown').classList.add('hidden');
+      document.getElementById('clear-search-btn').classList.add('hidden');
+      document.getElementById('found-guest-card').classList.add('hidden');
+      clearHighlights();
+    }
+
+    function selectGuestDirectly(guestId) {
+      const guest = guestList.find(g => g.id === guestId);
+      if (!guest) return;
+
+      document.getElementById('search-results-dropdown').classList.add('hidden');
+      
+      // Update Found Guest Card
+      document.getElementById('found-guest-name').innerText = guest.name + (guest.isChild ? ' ⭐' : '');
+      document.getElementById('found-guest-table').innerText = guest.table === 1 ? 'Brauttisch' : `Tisch ${guest.table}`;
+      document.getElementById('found-guest-card').classList.remove('hidden');
+
+      // Highlight Table & Seat
+      highlightTableAndGuest(guest);
+    }
+
+    function clearHighlights() {
+      document.querySelectorAll('[id^="table-card-"]').forEach(el => {
+        el.classList.remove('ring-4', 'ring-gold-500', 'bg-gold-100', 'animate-pulse');
+      });
+      document.querySelectorAll('[id^="seat-item-"]').forEach(el => {
+        el.classList.remove('bg-amber-300', 'font-bold', 'scale-105', 'shadow-md');
+      });
+    }
+
+    function highlightTableAndGuest(guest) {
+      clearHighlights();
+
+      const tableEl = document.getElementById(`table-card-${guest.table}`);
+      if (tableEl) {
+        tableEl.classList.add('ring-4', 'ring-gold-500', 'bg-gold-100', 'animate-pulse');
+        tableEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+
+      const seatEl = document.getElementById(`seat-item-${guest.id}`);
+      if (seatEl) {
+        seatEl.classList.add('bg-amber-300', 'font-bold', 'scale-105', 'shadow-md');
+      }
+
+      // Trigger Confetti & Sound Effects
+      triggerConfetti();
+      playChime();
+      speakGreeting(guest);
+    }
+
+    // Canvas Confetti / Gold Sparkles Animation
+    function triggerConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#ffd700', '#f5b81a', '#ffffff', '#e6c200', '#d4af37'];
+
+      for (let i = 0; i < 80; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height / 3,
+          vx: (Math.random() - 0.5) * 12,
+          vy: (Math.random() - 0.7) * 14,
+          size: Math.random() * 6 + 3,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1,
+          decay: Math.random() * 0.02 + 0.01
+        });
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let active = false;
+
+        particles.forEach(p => {
+          if (p.alpha > 0) {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.2; // Gravity
+            p.alpha -= p.decay;
+
+            ctx.globalAlpha = Math.max(0, p.alpha);
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fill();
+
+            active = true;
+          }
+        });
+
+        if (active) {
+          requestAnimationFrame(animate);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+
+      animate();
+    }
+
+    // Web Audio Chime Sound
+    function playChime() {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+        osc.frequency.exponentialRampToValueAtTime(1046.50, ctx.currentTime + 0.3); // C6
+
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start();
+        osc.stop(ctx.currentTime + 0.8);
+      } catch(e) {
+        console.log("Audio play allowed on user interaction");
+      }
+    }
+
+    // Gemini Speech Voice Greeting (Without reading seat numbers!)
+    async function speakGreeting(guest) {
+      const tableName = guest.table === 1 ? "am Brauttisch" : `an Tisch ${guest.table}`;
+      const text = `Herzlich willkommen, ${guest.name}! Du sitzt ${tableName}. Wir wünschen dir eine wunderbare Feier!`;
+
+      // Try Gemini TTS API
+      try {
+        const payload = {
+          contents: [{
+            parts: [{ text: text }]
+          }],
+          generationConfig: {
+            responseModalities: ["AUDIO"],
+            speechConfig: {
+              voiceConfig: {
+                prebuiltVoiceConfig: { voiceName: "Kore" }
+              }
+            }
+          },
+          model: "gemini-2.5-flash-preview-tts"
+        };
+
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        const part = result?.candidates?.[0]?.content?.parts?.[0];
+        
+        if (part?.inlineData?.data) {
+          const sampleRate = parseInt(part.inlineData.mimeType.match(/rate=(\d+)/)?.[1] || "24000", 10);
+          const pcmData = base64ToArrayBuffer(part.inlineData.data);
+          const pcm16 = new Int16Array(pcmData);
+          const wavBlob = pcmToWav(pcm16, sampleRate);
+          const audioUrl = URL.createObjectURL(wavBlob);
+          const audio = new Audio(audioUrl);
+          audio.play();
+          return;
+        }
+      } catch (err) {
+        console.log("Fallback to Web Speech API", err);
+      }
+
+      // Web Speech API Fallback
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'de-DE';
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    // Helper functions for Audio PCM conversion
+    function base64ToArrayBuffer(base64) {
+      const binaryString = window.atob(base64);
+      const len = binaryString.length;
+      const bytes = new Uint8Array(len);
+      for (let i = 0; i < len; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      return bytes.buffer;
+    }
+
+    function pcmToWav(pcm16, sampleRate) {
+      const numChannels = 1;
+      const bytesPerSample = 2;
+      const blockAlign = numChannels * bytesPerSample;
+      const byteRate = sampleRate * blockAlign;
+      const dataSize = pcm16.length * bytesPerSample;
+      const buffer = new ArrayBuffer(44 + dataSize);
+      const view = new DataView(buffer);
+
+      function writeString(offset, string) {
+        for (let i = 0; i < string.length; i++) {
+          view.setUint8(offset + i, string.charCodeAt(i));
+        }
+      }
+
+      writeString(0, 'RIFF');
+      view.setUint32(4, 36 + dataSize, true);
+      writeString(8, 'WAVE');
+      writeString(12, 'fmt ');
+      view.setUint32(16, 16, true);
+      view.setUint16(20, 1, true);
+      view.setUint16(22, numChannels, true);
+      view.setUint32(24, sampleRate, true);
+      view.setUint32(28, byteRate, true);
+      view.setUint16(32, blockAlign, true);
+      view.setUint16(34, 16, true);
+      writeString(36, 'data');
+      view.setUint32(40, dataSize, true);
+
+      let offset = 44;
+      for (let i = 0; i < pcm16.length; i++) {
+        view.setInt16(offset, pcm16[i], true);
+        offset += 2;
+      }
+
+      return new Blob([buffer], { type: 'audio/wav' });
+    }
+
+    function scrollToOverview() {
+      document.getElementById('overview-section').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Admin Password & Console Management
+    function openAdminModal() {
+      if (window.innerWidth < 1024) {
+        alert("Die Adminkonsole steht nur auf Desktop-Geräten zur Verfügung.");
+        return;
+      }
+
+      if (isAdminLoggedIn) {
+        openAdminDashboard();
+      } else {
+        document.getElementById('admin-modal').classList.remove('hidden');
+      }
+    }
+
+    function closeAdminModal() {
+      document.getElementById('admin-modal').classList.add('hidden');
+    }
+
+    function verifyAdminPassword() {
+      const pass = document.getElementById('admin-password-input').value;
+      if (pass === ADMIN_PASSWORD) {
+        isAdminLoggedIn = true;
+        closeAdminModal();
+        openAdminDashboard();
+      } else {
+        alert("Falsches Passwort!");
+      }
+    }
+
+    function openAdminDashboard() {
+      renderAdminView();
+      document.getElementById('admin-dashboard-modal').classList.remove('hidden');
+    }
+
+    function closeAdminDashboard() {
+      document.getElementById('admin-dashboard-modal').classList.add('hidden');
+    }
+
+    // Render Admin View for Editing Tables and Guests
+    function renderAdminView() {
+      const container = document.getElementById('admin-tables-list');
+      let html = '';
+
+      const tables = [{ id: 1, name: 'Brauttisch' }];
+      for (let i = 3; i <= 20; i++) tables.push({ id: i, name: `Tisch ${i}` });
+
+      tables.forEach(t => {
+        const guests = guestList.filter(g => g.table === t.id).sort((a,b) => a.seat - b.seat);
+
+        html += `
+          <div class="bg-amber-50/60 border border-gold-300 rounded-2xl p-4 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between pb-2 border-b border-gold-200 mb-3">
+                <h4 class="font-bold text-amber-900 text-sm">${t.name}</h4>
+                <span class="text-xs bg-gold-200 text-gold-800 px-2 py-0.5 rounded-full font-semibold">${guests.length} Personen</span>
+              </div>
+
+              <!-- Guest List -->
+              <div class="space-y-1.5 mb-4 max-h-48 overflow-y-auto pr-1">
+                ${guests.map(g => `
+                  <div class="bg-white border border-gold-200 rounded-lg p-2 flex items-center justify-between text-xs shadow-sm">
+                    <div class="flex items-center space-x-2">
+                      <span class="font-bold text-amber-700">#${g.seat}</span>
+                      <span class="font-medium text-gray-800">${g.name}</span>
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                      <button onclick="toggleChildStatus(${g.id})" class="text-xs px-2 py-0.5 rounded ${g.isChild ? 'bg-amber-100 text-amber-800 font-bold' : 'bg-gray-100 text-gray-500'}">
+                        ${g.isChild ? '⭐ Kind' : 'Erwachsener'}
+                      </button>
+                      <button onclick="deleteGuestFromAdmin(${g.id})" class="text-rose-500 hover:text-rose-700 p-1">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- Add Guest Form -->
+            <div class="pt-2 border-t border-gold-200 flex items-center space-x-2">
+              <input type="text" id="new-guest-name-${t.id}" placeholder="Name..." class="p-2 border border-amber-200 rounded-lg flex-1 text-xs outline-none focus:ring-1 focus:ring-gold-400">
+              <label class="flex items-center space-x-1 cursor-pointer bg-white px-2 py-1.5 border border-amber-200 rounded-lg text-xs text-amber-800">
+                <input type="checkbox" id="new-guest-child-${t.id}" class="accent-amber-600">
+                <span>⭐ Kind</span>
+              </label>
+              <button onclick="addGuestFromAdmin(${t.id})" class="bg-amber-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-amber-700 transition">
+                +
+              </button>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function addGuestFromAdmin(tableId) {
+      const nameInput = document.getElementById(`new-guest-name-${tableId}`);
+      const childInput = document.getElementById(`new-guest-child-${tableId}`);
+
+      if (!nameInput || !nameInput.value.trim()) {
+        alert("Bitte geben Sie einen Namen ein.");
+        return;
+      }
+
+      const nextId = guestList.length > 0 ? Math.max(...guestList.map(g => g.id)) + 1 : 1;
+      const tableGuests = guestList.filter(g => g.table === tableId);
+      const nextSeat = tableGuests.length > 0 ? Math.max(...tableGuests.map(g => g.seat)) + 1 : 1;
+
+      guestList.push({
+        id: nextId,
+        name: nameInput.value.trim(),
+        table: tableId,
+        seat: nextSeat,
+        isChild: childInput ? childInput.checked : false
+      });
+
+      saveGuestData();
+      renderHallPlan();
+      renderAdminView();
+    }
+
+    function deleteGuestFromAdmin(guestId) {
+      if (confirm("Möchten Sie diesen Gast wirklich löschen?")) {
+        guestList = guestList.filter(g => g.id !== guestId);
+        saveGuestData();
+        renderHallPlan();
+        renderAdminView();
+      }
+    }
+
+    function toggleChildStatus(guestId) {
+      const guest = guestList.find(g => g.id === guestId);
+      if (guest) {
+        guest.isChild = !guest.isChild;
+        saveGuestData();
+        renderHallPlan();
+        renderAdminView();
+      }
+    }
+
+    // Excel Export & Import
+    function exportToExcel() {
+      const data = guestList.map(g => ({
+        "ID": g.id,
+        "Name": g.name,
+        "Tisch": g.table === 1 ? "Brauttisch" : g.table,
+        "Sitzplatz": g.seat,
+        "Kind": g.isChild ? "Ja" : "Nein"
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(data);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Gästeliste");
+
+      XLSX.writeFile(workbook, "Hochzeit_Gaelsteliste.xlsx");
+    }
+
+    function importFromExcel(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const json = XLSX.utils.sheet_to_json(worksheet);
+
+        if (json && json.length > 0) {
+          guestList = json.map((row, index) => ({
+            id: index + 1,
+            name: row["Name"] || row["name"] || "Gast",
+            table: parseInt(row["Tisch"] || row["tisch"] || 1, 10) || 1,
+            seat: parseInt(row["Sitzplatz"] || row["platz"] || index + 1, 10) || (index + 1),
+            isChild: (row["Kind"] || row["kind"] || "").toString().toLowerCase() === "ja"
+          }));
+
+          saveGuestData();
+          renderHallPlan();
+          renderAdminView();
+          alert("Gästeliste erfolgreich importiert!");
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    // Initial Loading
+    window.onload = function() {
+      loadGuestData();
+      renderHallPlan();
+    };
+  </script>
+</body>
+</html>
